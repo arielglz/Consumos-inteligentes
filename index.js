@@ -1,9 +1,6 @@
 const express = require('express');
 const morgan = require('morgan');
-const mongoose = require('mongoose');
-const req = require('express/lib/request');
 const cors = require('cors');
-const history = require('connect-history-api-fallback');
 
 //Custom imports
 //const verifyToken = require('./middlewares/validate-token');
