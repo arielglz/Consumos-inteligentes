@@ -32,6 +32,8 @@ app.use(cors(corsOptions));
 //app.use(history());
 
 //Routes
+app.use('/', require('./routes/clients'));
+app.use('/', require('./routes/auth'));
 //app.use('/api/user', require('./routes/auth'));
 //app.use('/api/dashboard', verifyToken, require('./routes/dashboard'));
 
@@ -39,6 +41,6 @@ app.use(cors(corsOptions));
 app.use(express.static(__dirname + "/public"));
 
 //Starting server
-app.listen(app.get(process.env.PORT), () => {
+app.listen(app.get(process.env.PORT) || 3000, () => {
     console.log(`The backend server is listening at port: ${process.env.PORT}`)
 })
