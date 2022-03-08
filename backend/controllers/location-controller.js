@@ -7,7 +7,7 @@ const pool = new Pool({
     host: `${process.env.POSTGRES_HOST}` || 'localhost',
     user: `${process.env.POSTGRES_USERNAME}` ||'postgres',
     password: `${process.env.POSTGRES_PASSWORD}`,
-    database: `${process.env.POSTGRES_DB}` || 'micro_controller',
+    database: `${process.env.POSTGRES_DB}` || 'dblab',
     port: '5432'
 });
 
