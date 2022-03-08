@@ -15,15 +15,6 @@ var corsOptions = {
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
-//DB connection
-/*
-const uri = `mongodb+srv://${process.env.USER}:${process.env.PASSWORD}@cluster0.fr8f5.mongodb.net/${process.env.DBNAME}?retryWrites=true&w=majority`
-mongoose.connect(uri,
-    { useNewUrlParser: true, useUnifiedTopology: true }
-    )
-    .then(() => console.log(`Connected to the database ${process.env.DBNAME}`))
-    .catch(e => console.log('Error db:', e))*/
-
 //Middlewares
 app.use(morgan('dev'))
 app.use(express.urlencoded({ extended: false }));
@@ -34,8 +25,8 @@ app.use(cors(corsOptions));
 //Routes
 app.use('/', require('./routes/clients'));
 app.use('/', require('./routes/auth'));
-//app.use('/api/user', require('./routes/auth'));
-//app.use('/api/dashboard', verifyToken, require('./routes/dashboard'));
+app.use('/', require('./routes/devices'));
+app.use('/', require('./routes/location'));
 
 //Static files folder
 app.use(express.static(__dirname + "/public"));

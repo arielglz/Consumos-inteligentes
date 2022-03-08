@@ -17,7 +17,7 @@ const schemaRegistration = Joi.object({
     s_nombre: Joi.string().min(4).max(40).allow(''),
     p_apellido: Joi.string().min(4).max(40).required(),
     s_apellido: Joi.string().min(4).max(40).allow(''),
-    numero: Joi.string().min(12).max(13).required(),
+    numero: Joi.string().min(10).max(12).required(),
     email: Joi.string().min(6).max(40).required().email(),
     password: Joi.string().min(6).max(60).required()
 })
@@ -27,10 +27,11 @@ const getClients = async (req, res) => {
    res.status(200).json(response.rows);
 }
 
+
 const getClientById = async (req, res) => {
-    /*const response = await pool.query('SELECT * FROM users WHERE id = $1', [req.params.id]);
-    res.status(200).json(response.rows);*/
-    console.log("Cliente creado");
+    const response = await pool.query('SELECT * FROM users WHERE id = $1', [req.params.id]);
+    res.status(200).json(response.rows);
+    //console.log("Cliente creado");
 }
 
 const registerClient = async(req, res) => {
