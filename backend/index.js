@@ -28,6 +28,7 @@ app.use('/', require('./routes/auth'));
 app.use('/', require('./routes/devices'));
 app.use('/', require('./routes/location'));
 app.use('/', require('./routes/consumption'))
+app.use('/', require('./routes/plug'))
 
 //Static files folder
 app.use(express.static(__dirname + "/public"));

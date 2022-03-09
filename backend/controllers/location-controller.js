@@ -15,7 +15,7 @@ const schemaLocationRegistration = Joi.object({
     direccion: Joi.string().min(4).max(200).required(),
     municipio: Joi.string().min(4).max(40).allow(''),
     ciudad: Joi.string().min(4).max(40).required(),
-    provincia: Joi.string().min(10).max(12).required(),
+    provincia: Joi.string().min(4).max(12).required(),
     pais: Joi.string().min(6).max(40).required(),
     id_cliente: Joi.string().min(1).max(10).required()
 })
@@ -30,10 +30,15 @@ const getLocationsByID = async (req, res) => {
     res.status(200).json(response.rows);
 }
 
+const getMyLocationsByClientID = async (req, res) => {
+    const response = await pool.query('SELECT * FROM localidad WHERE id_cliente = $1', [req.params.id]);
+    res.status(200).json(response.rows);
+}
+
 const registerLocation = async(req, res) => {
     //Validate cliente data before insert
 
-    const { error } = schemaDeviceRegistration.validate(req.body);
+    const { error } = schemaLocationRegistration.validate(req.body);
     if (error) {
         return res.status(400).json({
             error: error.details[0].message
@@ -95,6 +100,7 @@ const deleteLocationByID = async (req, res) => {
 module.exports = {
     getLocations,
     getLocationsByID,
+    getMyLocationsByClientID,
     registerLocation,
     updateLocation,
     deleteLocationByID
