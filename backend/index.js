@@ -13,7 +13,7 @@ const app = express();
 
 const allowedOrigins = [
     'http://localhost:3001',
-    'http://localhost:3002',
+    'http://localhost:3050',
     'http://localhost:3003',
     'http://localhost:3004',
 ];

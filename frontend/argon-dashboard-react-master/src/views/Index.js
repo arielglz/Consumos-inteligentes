@@ -66,7 +66,7 @@ const Index = (props) => {
       <Header />
       {/* Page content */}
       <Container className="mt--7" fluid>
-        <Row>
+      {/*  <Row>
           <Col className="mb-5 mb-xl-0" xl="8">
             <Card className="bg-gradient-default shadow">
               <CardHeader className="bg-transparent">
@@ -109,7 +109,7 @@ const Index = (props) => {
                 </Row>
               </CardHeader>
               <CardBody>
-                {/* Chart */}
+                {/* Chart 
                 <div className="chart">
                   <Line
                     data={chartExample1[chartExample1Data]}
@@ -133,7 +133,7 @@ const Index = (props) => {
                 </Row>
               </CardHeader>
               <CardBody>
-                {/* Chart */}
+                {/* Chart
                 <div className="chart">
                   <Bar
                     data={chartExample2.data}
@@ -143,16 +143,16 @@ const Index = (props) => {
               </CardBody>
             </Card>
           </Col>
-        </Row>
+        </Row>*/}
         <Row className="mt-5">
           <Col className="mb-5 mb-xl-0" xl="8">
             <Card className="shadow">
               <CardHeader className="border-0">
                 <Row className="align-items-center">
                   <div className="col">
-                    <h3 className="mb-0">Page visits</h3>
+                    <h3 className="mb-0">Mis dispositivos</h3>
                   </div>
-                  <div className="col text-right">
+                  {/*<div className="col text-right">
                     <Button
                       color="primary"
                       href="#pablo"
@@ -161,20 +161,20 @@ const Index = (props) => {
                     >
                       See all
                     </Button>
-                  </div>
+                  </div>*/}
                 </Row>
               </CardHeader>
               <Table className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col">Page name</th>
-                    <th scope="col">Visitors</th>
-                    <th scope="col">Unique users</th>
-                    <th scope="col">Bounce rate</th>
+                    <th scope="col">Direccion</th>
+                    <th scope="col">Ubicacion</th>
+                    <th scope="col">Dispositivo</th>
+                    <th scope="col">Voltaje</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
+                  {/*<tr>
                     <th scope="row">/argon/</th>
                     <td>4,569</td>
                     <td>340</td>
@@ -216,11 +216,12 @@ const Index = (props) => {
                       <i className="fas fa-arrow-down text-danger mr-3" />{" "}
                       46,53%
                     </td>
-                  </tr>
+                  </tr>*/}
                 </tbody>
               </Table>
             </Card>
           </Col>
+          {/*
           <Col xl="4">
             <Card className="shadow">
               <CardHeader className="border-0">
@@ -328,7 +329,7 @@ const Index = (props) => {
                 </tbody>
               </Table>
             </Card>
-          </Col>
+          </Col>*/}
         </Row>
       </Container>
     </>
