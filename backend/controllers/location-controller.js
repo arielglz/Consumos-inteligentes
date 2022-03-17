@@ -12,10 +12,11 @@ const pool = new Pool({
 });
 
 const schemaLocationRegistration = Joi.object({
-    direccion: Joi.string().min(4).max(200).required(),
-    municipio: Joi.string().min(4).max(40).allow(''),
-    ciudad: Joi.string().min(4).max(40).required(),
-    provincia: Joi.string().min(4).max(12).required(),
+    alias: Joi.string().min(2).max(200).required(),
+    direccion: Joi.string().min(2).max(200).required(),
+    municipio: Joi.string().min(2).max(40).allow(''),
+    ciudad: Joi.string().min(2).max(40).required(),
+    provincia: Joi.string().min(2).max(40).required(),
     pais: Joi.string().min(6).max(40).required(),
     id_cliente: Joi.string().min(1).max(10).required()
 })
@@ -54,9 +55,9 @@ const registerLocation = async(req, res) => {
         })
     }*/
 
-    const { direccion, municipio, ciudad, provincia, pais, id_cliente } = req.body;
-    const response = await pool.query('INSERT INTO localidad (direccion, municipio, ciudad, provincia, pais, id_cliente) VALUES ($1, $2, $3, $4, $5, $6)', 
-                                        [ direccion, municipio, ciudad, provincia, pais, id_cliente ]);
+    const { alias, direccion, municipio, ciudad, provincia, pais, id_cliente } = req.body;
+    const response = await pool.query('INSERT INTO localidad (alias, direccion, municipio, ciudad, provincia, pais, id_cliente) VALUES ($1, $2, $3, $4, $5, $6, $7)', 
+                                        [ alias, direccion, municipio, ciudad, provincia, pais, id_cliente ]);
     res.status(200).json({
         msg: `Localidad del cliente ${id_cliente} creada satisfactoriamente.` 
     });

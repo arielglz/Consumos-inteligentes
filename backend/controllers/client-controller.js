@@ -13,10 +13,8 @@ const pool = new Pool({
 
 //Validate register data
 const schemaRegistration = Joi.object({
-    p_nombre: Joi.string().min(4).max(40).required(),
-    s_nombre: Joi.string().min(4).max(40).allow(''),
-    p_apellido: Joi.string().min(4).max(40).required(),
-    s_apellido: Joi.string().min(4).max(40).allow(''),
+    nombres: Joi.string().min(4).max(40).required(),
+    apellidos: Joi.string().min(4).max(40).required(),
     numero: Joi.string().min(10).max(12).required(),
     email: Joi.string().min(6).max(40).required().email(),
     password: Joi.string().min(6).max(60).required()
@@ -48,7 +46,7 @@ const registerClient = async(req, res) => {
     const isEmailExist = await pool.query('SELECT * FROM cliente WHERE email = $1', [req.body.email]);
     //console.log(isEmailExist.rowCount);
     if (isEmailExist.rowCount > 0) {
-        return res.status(400).json({
+        return res.status(409).json({
             error: 'El email introducido ya está siendo utilizado, favor de ingresar otro.'
         })
     }
@@ -57,10 +55,10 @@ const registerClient = async(req, res) => {
     const password = await bcrypt.hash(req.body.password, salt);
     console.log(password);
 
-    const { p_nombre, s_nombre, p_apellido, s_apellido, numero, email } = req.body;
-    const response = await pool.query('INSERT INTO cliente ( p_nombre, s_nombre, p_apellido, s_apellido, numero, email, password ) VALUES ($1, $2, $3, $4, $5, $6, $7)', [ p_nombre, s_nombre, p_apellido, s_apellido, numero, email, password ]);
+    const { nombres, apellidos, numero, email } = req.body;
+    const response = await pool.query('INSERT INTO cliente ( nombres, apellidos, numero, email, password ) VALUES ($1, $2, $3, $4, $5)', [ nombres, apellidos, numero, email, password ]);
     res.status(200).json({
-        msg: `Cliente ${p_nombre} ${p_apellido} creado satisfactoriamente.` 
+        msg: `Cliente ${nombres} ${apellidos} creado satisfactoriamente.` 
     });
 }
 

@@ -18,15 +18,16 @@ const schemaLogin = Joi.object({
 })
 
 const authClient = async (req, res) => {
+
     const { error } = schemaLogin.validate(req.body);
     if (error) {
-        return res.status(400)({
+        return res.status(400).json({
             error: error.details[0].message
         })
     }
 
     const isEmailExist = await pool.query('SELECT email FROM cliente WHERE email = $1', [req.body.email]);
-    const { rows } = await pool.query('SELECT p_nombre, p_apellido, email, password FROM cliente WHERE email = $1', [req.body.email]);
+    const { rows } = await pool.query('SELECT nombres, apellidos, email, password FROM cliente WHERE email = $1', [req.body.email]);
 
     if (!isEmailExist.rowCount) {
         return res.status(400).json({
@@ -36,7 +37,7 @@ const authClient = async (req, res) => {
 
     const validPassword = await bcrypt.compare(req.body.password, rows[0].password);
     if(!validPassword) {
-        return res.status(400).json({
+        return res.status(401).json({
             error: 'Contraseña invalida, favor de reeingresar la contraseña.'
         })
     }
@@ -47,7 +48,7 @@ const authClient = async (req, res) => {
     }, process.env.TOKEN_SECRET);
 
     res.header('auth-token', token).json({
-        msg: `Usuario ${rows[0].p_nombre} ${rows[0].p_apellido} loggeado correctamente, bievenido`,
+        msg: `Usuario ${rows[0].nombres} ${rows[0].apellidos} loggeado correctamente, bievenido`,
         token
     })
 
