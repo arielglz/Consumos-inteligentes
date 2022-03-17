@@ -39,7 +39,7 @@ function MyRoutes(){
             </Route>
             
             {/* Any input that isn't below, redirect to Login */}
-            <Route path="/*" to="/auth/login"/>
+            <Route path="*" element={<Navigate to='/auth/login' replace />}/>
         </Route>
     </Routes>
     )

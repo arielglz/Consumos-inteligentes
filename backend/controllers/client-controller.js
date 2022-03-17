@@ -27,7 +27,13 @@ const getClients = async (req, res) => {
 
 
 const getClientById = async (req, res) => {
-    const response = await pool.query('SELECT * FROM users WHERE id = $1', [req.params.id]);
+    const response = await pool.query('SELECT * FROM cliente WHERE id_cliente = $1', [req.params.id]);
+    res.status(200).json(response.rows);
+    //console.log("Cliente creado");
+}
+
+const getClientByEmail = async (req, res) => {
+    const response = await pool.query('SELECT * FROM cliente WHERE email = $1', [req.params.email]);
     res.status(200).json(response.rows);
     //console.log("Cliente creado");
 }
@@ -82,6 +88,7 @@ const deleteClientById = async (req, res) => {
 module.exports = {
     getClients,
     getClientById,
+    getClientByEmail,
     registerClient,
     updateClientById,
     deleteClientById

@@ -34,7 +34,7 @@ import {
 } from "reactstrap";
 
 import { useRef, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from '../../api/axios';
 
 const EMAIL_REGEX = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -148,7 +148,7 @@ const Register = () => {
           //console.log((response))
           setSuccessResponse(response.data.msg)
           setSuccess(true);   
-          setTimeout(500)
+          setTimeout(() => {console.log('something')}, 5000);
           navigate('/login', { replace: true })
       } catch (error) {
           if (!error?.response) {
@@ -166,8 +166,188 @@ const Register = () => {
 
   return (
     <>
-      <Col lg="6" md="8">
-        <Card className="bg-secondary shadow border-0">
+      <Col lg="8" md="8">
+        <Card className="bg-secondary shadow">
+              <CardHeader className="bg-white border-0">
+                <Row className="align-items-center">
+                  <Col xs="8">
+                    <h1 className="mb-0">Registro</h1>
+                  </Col>
+                    <Alert color="danger" className={errMsg ? "alert alert-danger" : "offscreen"}>
+                      {errMsg}
+                    </Alert>
+                    <Alert color="success" className={successResponse ? "alert alert-success" : "offscreen"}>
+                      {successResponse}
+                    </Alert>
+                </Row>
+              </CardHeader>
+              <CardBody>
+                <Form>
+                  {/*<h6 className="heading-small text-muted mb-4">
+                    User information
+                    </h6>*/}
+                  <div className="pl-lg-4">
+                  <Row>
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="nombres"
+                          >
+                            Nombres
+                          </label>
+                          <Input
+                            placeholder="Nombres" 
+                            type="text"
+                            id="nombres"
+                            className='form-control-alternative'
+                            ref={nombresRef}
+                            autoComplete="off"
+                            onChange={(e) => setNombres(e.target.value)}
+                            required
+                            aria-invalid={validNombres ? "false" : true}
+                            aria-describedby="nomnote"
+                            onFocus={() => setNombresFocus(true)}
+                            onBlur={() => setNombresFocus(false)}
+                            value={nombres}
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-last-name"
+                          >
+                            Apellidos
+                          </label>
+                          <Input
+                            placeholder="Apellidos" 
+                            type="text"
+                            id="apellidos" 
+                            className='form-control-alternative'
+                            ref={apellidosRef}
+                            autoComplete="off"
+                            onChange={(e) => setApellidos(e.target.value)}
+                            required
+                            aria-invalid={validApellidos ? "false" : true}
+                            aria-describedby="apnote"
+                            onFocus={() => setApellidosFocus(true)}
+                            onBlur={() => setApellidosFocus(false)}
+                            value={apellidos}
+                          />
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col lg="6">
+                        <FormGroup className={validNumero ? "has-success" : "has-danger"}>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-username"
+                          >
+                            Numero
+                          </label>
+                          <Input
+                            id="numero" 
+                            placeholder="809-220-1111"
+                            type="tel" 
+                            className={validNumero ? "is-valid" : "is-invalid"}
+                            ref={numeroRef}
+                            autoComplete="off"
+                            onChange={(e) => setNumero(e.target.value)}
+                            required
+                            aria-invalid={validNumero ? "false" : true}
+                            aria-describedby="numnote"
+                            onFocus={() => setNumeroFocus(true)}
+                            onBlur={() => setNumeroFocus(false)}
+                            value={numero}
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col lg="6">
+                        <FormGroup className={validEmail ? "has-success" : "has-danger"}>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-email"
+                          >
+                            Email address
+                          </label>
+                          <Input
+                            placeholder="micorreo@ejemplo.com"
+                            id="email" 
+                            className={validEmail ? "is-valid" : "is-invalid"}
+                            ref={emailRef}
+                            autoComplete="off"
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            aria-invalid={validEmail ? "false" : true}
+                            aria-describedby="uidnote"
+                            onFocus={() => setEmailFocus(true)}
+                            onBlur={() => setEmailFocus(false)}
+                            value={email}
+                          />
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col lg="6">
+                        <FormGroup className={validPwd ? "has-success" : "has-danger"}>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-password"
+                          >
+                            Contraseña
+                          </label>
+                          <Input
+                            placeholder="Contraseña"
+                            type="password"
+                            id="password" 
+                            className={validPwd ? "form-control is-valid" : "form-control is-invalid"}
+                            onChange={(e) => setPwd(e.target.value)}
+                            required
+                            aria-invalid={validPwd ? "false" : true}
+                            aria-describedby="pwdnote"
+                            onFocus={() => setPwdFocus(true)}
+                            onBlur={() => setPwdFocus(false)}
+                            value={pwd}
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col lg="6">
+                        <FormGroup className={validMatch && matchPwd != ''  ? "has-success" : "has-danger"}>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-confirmpassword"
+                          >
+                            Confirmar Contraseña
+                          </label>
+                          <Input
+                            placeholder="Confirmar Contraseña"
+                            type="password"
+                            id="confirm_password" 
+                            className={validMatch && matchPwd != '' ? "form-control is-valid" : "form-control is-invalid"}
+                            onChange={(e) => setMatchPwd(e.target.value)}
+                            required
+                            aria-invalid={validMatch ? "false" : true}
+                            aria-describedby="confirmnote"
+                            onFocus={() => setMatchFocus(true)}
+                            onBlur={() => setMatchFocus(false)}
+                            value={matchPwd}
+                          />
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                    <Button className="mt-4" color="primary" 
+                            type="submit" onClick={handleSubmit}
+                            disabled={!validEmail || !validPwd || !validMatch ? true : false} >
+                      Crear cuenta
+                    </Button>
+                  </div>
+                </Form>
+              </CardBody>
+            </Card>
+        {/*<Card className="bg-secondary shadow border-0">
           <CardBody className="px-lg-5 py-lg-5">
             <div className="text-center text-muted mb-4">
               <Alert color="danger" className={errMsg ? "alert alert-danger" : "offscreen"}>
@@ -346,14 +526,19 @@ const Register = () => {
                   </div>
                 </Col>
               </Row>*/}
-              <div className="text-center">
+              {/*<div className="text-center">
                 <Button className="mt-4" color="primary" type="submit" onClick={handleSubmit}>
                   Create account
                 </Button>
               </div>
             </Form>
           </CardBody>
-        </Card>
+        </Card>*/}
+        <Row className="mt-3">
+          <Col className="text-left" xs="6">
+            <Link to="/auth/login"><small className="text-light">Ya tengo una cuenta</small></Link>
+          </Col>
+        </Row>
       </Col>
     </>
   );

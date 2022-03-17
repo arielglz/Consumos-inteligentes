@@ -25,11 +25,11 @@ import Icons from "views/examples/Icons.js";
 
 var routes = [
   {
-    path: "/index",
+    path: "",
     name: "Dispositivos",
     icon: "ni ni-tv-2 text-primary",
     component: Index,
-    layout: "/admin",
+    layout: "",
   },
   /*{
     path: "/icons",
@@ -39,18 +39,18 @@ var routes = [
     layout: "/admin",
   }*/,
   {
-    path: "/maps",
+    path: "",
     name: "Direcciones",
     icon: "ni ni-pin-3 text-orange",
     component: Maps,
-    layout: "/admin",
+    layout: "",
   },
   {
-    path: "/user-profile",
+    path: "",
     name: "Facturas",
     icon: "ni ni-money-coins text-yellow",
     component: Profile,
-    layout: "/admin",
+    layout: "",
   },
   /*{
     path: "/tables",
@@ -60,11 +60,11 @@ var routes = [
     layout: "/admin",
   }*/,
   {
-    path: "/login",
+    path: "",
     name: "Consumos",
     icon: "ni ni-chart-bar-32 text-info",
     component: Login,
-    layout: "/auth",
+    layout: "",
   },
   /*{
     path: "/register",
