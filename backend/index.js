@@ -12,10 +12,10 @@ const app = express();
 //app.set('port', process.env.PORT || 3000);
 
 const allowedOrigins = [
-    'http://localhost:3001',
     'http://localhost:3050',
-    'http://localhost:3003',
-    'http://localhost:3004',
+    'http://10.0.0.203:3050',
+    '*',
+    '*://localhost:*/*',
 ];
 
 const corsOptions = {
@@ -55,6 +55,6 @@ app.set({
 })*/
 
 //Starting server
-app.listen(app.get(process.env.PORT) || 3000, () => {
+app.listen(app.get(process.env.PORT) || 3000,  () => {
     console.log(`The backend server is listening at port: ${process.env.PORT}`)
 })

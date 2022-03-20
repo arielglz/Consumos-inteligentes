@@ -8,8 +8,14 @@ import AuthLayout from "../layouts/Auth.js";
 //import Dashboard from "./Dashboard"
 import RequireAuth from "../hooks/RequireAuth";
 import Index from "views/Index";
+import Devices from "../components/Devices"
+import Locations from "components/Locations";
+import Bills from "components/Bills";
+import Consumptions from "components/Consumptions";
+import Profile from "views/examples/Profile";
 //import Home from "./Home";
 
+const token = localStorage.getItem('auth-token')
 
 function MyRoutes(){
     return(
@@ -30,16 +36,20 @@ function MyRoutes(){
             */}
             {/* Protected routes */}
             <Route element={<RequireAuth />}>
-                <Route path='dashboard' element={<AdminLayout />} />
-               {/* 
-                 <Route path="/" element={<Index />} />
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/home" element={<Home />} />
-                <Route path="/dashboard" element={<Dashboard />} />*/}
+               <Route element={<AdminLayout />}>
+                    <Route path='dashboard' element={<Index />} />
+                    <Route path='devices' element={<Devices />} />
+                    <Route path='locations' element={<Locations />} />
+                    <Route path='bills' element={<Bills />} />
+                    <Route path='consumptions' element={<Consumptions />} />
+                    <Route path='profile' element={<Profile />} />
+                </Route>
             </Route>
             
-            {/* Any input that isn't below, redirect to Login */}
-            <Route path="*" element={<Navigate to='/auth/login' replace />}/>
+            {/* Any input that isn't below, redirect to Dashboard or Login */}
+            <Route path="*" element={
+            token ? <Navigate to='/dashboard' replace />
+                  : <Navigate to='/auth/login' replace />}/>
         </Route>
     </Routes>
     )

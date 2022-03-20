@@ -36,45 +36,24 @@ import {
 
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import jwtDecode from "jwt-decode";
-import axios from '../../api/axios'
-
 
 const AdminNavbar = (props) => {
 
   const navigate = useNavigate();
-  const [clientEmail, setClientEmail] = useState('');
+  const [clientData, setClientData] = useState('');
   
 
   useEffect(() => {
-    const token = localStorage.getItem('auth-token');
-    const data = jwtDecode(token);
-    setClientEmail(data.name)
-
-    const getClientByEmail = async () => {
-      let result 
-      try {
-        const response = await axios.get('clients/'+ data.name, {
-            headers: { 
-              'Content-Type': 'application/json',
-          }
-        })
-  
-       return response.data[0]
-  
-      } catch (error) {
-        return error
-      }
-    }
-    getClientByEmail()
-  }, [])
-
+    console.log(props)
+  }, []);
   const logout = async () => {
     //setAuth({})
 
     localStorage.removeItem('auth-token')
     navigate('/auth/login')
   }
+
+
 
   return (
     <>
@@ -93,7 +72,7 @@ const AdminNavbar = (props) => {
                 <Media className="align-items-center">
                   <Media className="ml-2 d-none d-lg-block">
                     <span className="mb-0 text-sm font-weight-bold">
-                      {clientEmail}
+                      {props.clientEmail}
                     </span>
                   </Media>
                 </Media>
@@ -102,7 +81,7 @@ const AdminNavbar = (props) => {
                 <DropdownItem className="noti-title" header tag="div">
                   <h6 className="text-overflow m-0">Bienvenido!</h6>
                 </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
+                <DropdownItem to="/profile" tag={Link}>
                   <i className="ni ni-single-02" />
                   <span>Mi perfil</span>
                 </DropdownItem>

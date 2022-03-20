@@ -29,6 +29,15 @@ const getDevicesByID = async (req, res) => {
     res.status(200).json(response.rows);
 }
 
+const getDevicesByClientID = async (req, res) => {
+    const response =  await pool.query('SELECT localidad.alias, plug.ubicacion, dispositivo.nombre, dispositivo.marca, dispositivo.voltaje, plug.estado FROM dispositivo, plug, localidad WHERE localidad.id_localidad = plug.id_localidad AND plug.id_plug = dispositivo.id_plug AND localidad.id_cliente = $1', [req.params.id])
+    if (response.rows.length == 0) {
+        res.status(404).json({msg: 'El usuario no tiene dispositivos creados, favor de crear algunos.'});
+    } else {
+        res.status(200).json(response.rows);
+    }
+}
+
 const getDevicesByPlugID = async (req, res) => {
     const response = await pool.query('SELECT * FROM dispositivo WHERE id_plug = $1', [req.params.id]);
     res.status(200).json(response.rows);
@@ -99,6 +108,7 @@ module.exports = {
     getDevices,
     getDevicesByID,
     getDevicesByPlugID,
+    getDevicesByClientID,
     registerDevice,
     updateDevice,
     deleteDeviceByID

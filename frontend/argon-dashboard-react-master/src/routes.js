@@ -16,19 +16,23 @@
 
 */
 import Index from "views/Index.js";
+import Devices from "components/Devices";
 import Profile from "views/examples/Profile.js";
 import Maps from "views/examples/Maps.js";
 import Register from "views/examples/Register.js";
 import Login from "views/examples/Login.js";
 import Tables from "views/examples/Tables.js";
 import Icons from "views/examples/Icons.js";
+import Locations from "components/Locations";
+import Bills from "components/Bills";
+import Consumptions from "components/Consumptions";
 
 var routes = [
   {
-    path: "",
+    path: "devices",
     name: "Dispositivos",
     icon: "ni ni-tv-2 text-primary",
-    component: Index,
+    component: Devices,
     layout: "",
   },
   /*{
@@ -39,17 +43,17 @@ var routes = [
     layout: "/admin",
   }*/,
   {
-    path: "",
+    path: "locations",
     name: "Direcciones",
     icon: "ni ni-pin-3 text-orange",
-    component: Maps,
+    component: Locations,
     layout: "",
   },
   {
-    path: "",
+    path: "bills",
     name: "Facturas",
     icon: "ni ni-money-coins text-yellow",
-    component: Profile,
+    component: Bills,
     layout: "",
   },
   /*{
@@ -60,10 +64,10 @@ var routes = [
     layout: "/admin",
   }*/,
   {
-    path: "",
+    path: "consumptions",
     name: "Consumos",
     icon: "ni ni-chart-bar-32 text-info",
-    component: Login,
+    component: Consumptions,
     layout: "",
   },
   /*{

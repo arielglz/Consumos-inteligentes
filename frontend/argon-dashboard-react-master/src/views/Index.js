@@ -24,6 +24,7 @@ import Chart from "chart.js";
 import { Line, Bar } from "react-chartjs-2";
 // reactstrap components
 import {
+  Badge,
   Button,
   Card,
   CardHeader,
@@ -47,10 +48,12 @@ import {
 } from "variables/charts.js";
 
 import Header from "components/Headers/Header.js";
+import { useEffect } from "react";
 
 const Index = (props) => {
   const [activeNav, setActiveNav] = useState(1);
   const [chartExample1Data, setChartExample1Data] = useState("data1");
+  const [clientDevices, setClientDevices] = useState([])
 
   if (window.Chart) {
     parseOptions(Chart, chartOptions());
@@ -61,6 +64,33 @@ const Index = (props) => {
     setActiveNav(index);
     setChartExample1Data("data" + index);
   };
+
+  useEffect (() => {
+    //console.log(props.clientDevices)
+    //setClientDevices(props.clientDevices)
+  }) 
+
+  const fillTable = (devices) => {
+    return devices.map((device, index) => {
+      const { alias, ubicacion, nombre, marca, voltaje, estado } = device
+      return (
+        <tr key={index}>
+          <td>{alias}</td>
+          <td>{ubicacion}</td>
+          <td>{nombre}</td>
+          <td>{marca}</td>
+          <td>{voltaje}</td>
+          <td>
+            <Badge color="" className="badge-dot mr-4">
+              <i className={estado == 'OFF' ? "bg-warning" : 'bg-success'} />
+                {estado}
+            </Badge>
+          </td>
+        </tr>
+      )
+    })
+  }
+
   return (
     <>
       <Header />
@@ -167,13 +197,16 @@ const Index = (props) => {
               <Table className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col">Direccion</th>
+                    <th scope="col">Localidad</th>
                     <th scope="col">Ubicacion</th>
                     <th scope="col">Dispositivo</th>
+                    <th scope="col">Marca</th>
                     <th scope="col">Voltaje</th>
+                    <th scope="col">Estado</th>
                   </tr>
                 </thead>
                 <tbody>
+                  {/*fillTable(props.clientDevices)*/}
                   {/*<tr>
                     <th scope="row">/argon/</th>
                     <td>4,569</td>
