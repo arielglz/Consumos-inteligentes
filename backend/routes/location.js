@@ -6,7 +6,8 @@ const { getLocations, getLocationsByID, registerLocation, updateLocation, delete
 
 router.get('/locations', verifyToken, getLocations);
 //router.get('/locations/:id', verifyToken, getLocationsByID);
-router.get('/locations/:id', verifyToken, getMyLocationsByClientID);
+router.get('/locations/client/:id', verifyToken, getMyLocationsByClientID);
+router.get('/locations/:id', verifyToken, getLocationsByID)
 router.post('/locations', verifyToken, registerLocation);
 router.put('/locations/:id', verifyToken, updateLocation);
 router.delete('/locations/:id', verifyToken, deleteLocationByID);

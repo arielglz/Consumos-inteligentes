@@ -30,7 +30,11 @@ const getDevicesByID = async (req, res) => {
 }
 
 const getDevicesByClientID = async (req, res) => {
-    const response =  await pool.query('SELECT localidad.alias, plug.ubicacion, dispositivo.nombre, dispositivo.marca, dispositivo.voltaje, plug.estado FROM dispositivo, plug, localidad WHERE localidad.id_localidad = plug.id_localidad AND plug.id_plug = dispositivo.id_plug AND localidad.id_cliente = $1', [req.params.id])
+    console.log(req.params.id)
+    if(toString(req.params.id) === 'null'){
+        return res.status(400).json({msg: 'ClientID vacio, favor de revisar'})
+    }
+    const response =  await pool.query('SELECT localidad.alias, plug.ubicacion, dispositivo.nombre, dispositivo.marca, dispositivo.voltaje, plug.estado, dispositivo.id_dispositivo FROM dispositivo, plug, localidad WHERE localidad.id_localidad = plug.id_localidad AND plug.id_plug = dispositivo.id_plug AND localidad.id_cliente = $1', [req.params.id])
     if (response.rows.length == 0) {
         res.status(404).json({msg: 'El usuario no tiene dispositivos creados, favor de crear algunos.'});
     } else {
@@ -89,7 +93,7 @@ const updateDevice = async(req, res) => {
     }*/
 
     const { nombre, marca, serial, voltaje, id_plug } = req.body;
-    const response = await pool.query('UPDATE dispositivo SET (nombre, marca, serial, voltaje, id_plug) VALUES ($1, $2, $3, $4, $5) WHERE id_dispositivo = $6', 
+    const response = await pool.query('UPDATE dispositivo SET nombre=$1, marca=$2, serial=$3, voltaje=$4, id_plug=$5 WHERE id_dispositivo = $6', 
                                      [ nombre, marca, serial, voltaje, id_plug, req.params.id ]);
     res.status(200).json({
         msg: `Dispositivo ${nombre} actualizado satisfactoriamente.` 
@@ -98,7 +102,7 @@ const updateDevice = async(req, res) => {
 
 const deleteDeviceByID = async (req, res) => {
     const id = req.params.id;
-    const response = await pool.query('DELETE FROM dispostivo WHERE id_dispositivo = $1', [id]);
+    const response = await pool.query('DELETE FROM dispositivo WHERE id_dispositivo = $1', [id]);
     res.status(200).json({
         message: 'Dispositivo eliminado'
     });

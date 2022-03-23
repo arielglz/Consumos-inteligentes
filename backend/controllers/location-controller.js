@@ -66,25 +66,16 @@ const registerLocation = async(req, res) => {
 const updateLocation = async(req, res) => {
     //Validate cliente data before insert
 
-    const { error } = schemaDeviceRegistration.validate(req.body);
+    const { error } = schemaLocationRegistration.validate(req.body);
     if (error) {
         return res.status(400).json({
             error: error.details[0].message
         })
-    }/*
+    }  
 
-    //Validate if email already exists
-    const isDeviceExist = await pool.query('SELECT * FROM dispositivos WHERE serial = $1', [req.body.serial]);
-    //console.log(isEmailExist.rowCount);
-    if (isEmailExist.rowCount > 0) {
-        return res.status(400).json({
-            error: 'El dispositivo introducido ya está siendo utilizado, favor de ingresar otro.'
-        })
-    }*/
-
-    const { direccion, municipio, ciudad, provincia, pais, id_cliente } = req.body;
-    const response = await pool.query('UPDATE localidad SET (direccion, municipio, ciudad, provincia, pais, id_cliente) VALUES ($1, $2, $3, $4, $5, $6) WHERE id_localidad = $7', 
-                                        [ direccion, municipio, ciudad, provincia, pais, id_cliente, req.params.id ]);
+    const { direccion, municipio, ciudad, provincia, pais, id_cliente, alias } = req.body;
+    const response = await pool.query('UPDATE localidad SET direccion=$1, municipio=$2, ciudad=$3, provincia=$4, pais=$5, id_cliente=$6, alias=$7 WHERE id_localidad = $8', 
+                                        [ direccion, municipio, ciudad, provincia, pais, id_cliente, alias, req.params.id ]);
     res.status(200).json({
         msg: `Localidad ${req.params.id} actualizada satisfactoriamente.` 
     });
