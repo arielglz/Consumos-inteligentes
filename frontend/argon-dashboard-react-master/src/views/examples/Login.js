@@ -76,7 +76,7 @@ const Login = () => {
                   }
               }
           )
-          console.log(JSON.stringify(response))
+          //console.log(JSON.stringify(response))
 
           const accessToken = response.data.token
           setAuth({ email, pwd, accessToken })
@@ -85,7 +85,7 @@ const Login = () => {
           setSuccessResponse(response.data.msg)
           localStorage.setItem('auth-token', accessToken)
           setTimeout(50000)
-          navigate(from, { replace: true })
+          navigate(from, { state: { clientEmail: email }, replace: true })
           //setSucess(true);
       } catch (error) {
           console.log(error)

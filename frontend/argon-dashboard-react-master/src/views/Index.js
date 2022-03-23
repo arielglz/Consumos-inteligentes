@@ -49,12 +49,21 @@ import {
 
 import Header from "components/Headers/Header.js";
 import { useEffect } from "react";
+import { useOutletContext, useLocation } from "react-router-dom";
+import axios from '../api/axios'
+import jwtDecode from "jwt-decode";
 
 const Index = (props) => {
   const [activeNav, setActiveNav] = useState(1);
   const [chartExample1Data, setChartExample1Data] = useState("data1");
-  const [clientDevices, setClientDevices] = useState([])
-
+  const [clientDevices, setClientDevices] = useState([]);
+  const [id, setId] = useState('');
+  const token = localStorage.getItem('auth-token');
+  const clientID = localStorage.getItem('clientID')
+  const data = jwtDecode(token);
+  //const clientDevices = useOutletContext();
+  const {state} = useLocation();
+  
   if (window.Chart) {
     parseOptions(Chart, chartOptions());
   }
@@ -65,10 +74,69 @@ const Index = (props) => {
     setChartExample1Data("data" + index);
   };
 
+  
+
   useEffect (() => {
-    //console.log(props.clientDevices)
+    console.log(state)
+    const id = localStorage.getItem('clientID');
+    setId(id)
+    console.log('Using useState', id)
+    const getClientData = async () => {
+      try {
+        const clientDataResponse = await axios.get('clients/'+ state.clientEmail, {
+          headers: { 
+            'Content-Type': 'application/json',
+        }
+      })
+      //setClientData(clientDataResponse.data[0])
+      console.log('ClientID from getClientData: ', clientDataResponse.data[0].id_cliente)
+      localStorage.setItem('clientID', clientDataResponse.data[0].id_cliente)
+
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getClientData()
+    const getClientDevices = async () => {
+      console.log('From getClientDevices', localStorage.getItem('clientID'))
+      if(localStorage.getItem('clientID') == null){return console.log('Error, clientID empty')}
+      try {
+  
+        const clientDevicesResponse = await axios.get('/devices/client/'+ localStorage.getItem('clientID'), {
+          headers: { 
+            'Content-Type': 'application/json',
+            'auth-token': token
+        }
+      })
+  
+       setClientDevices(clientDevicesResponse.data)
+  
+      } catch (error) {
+        console.log(error)
+      }
+    }
+   getClientDevices()
+    //console.log('From Index component', localStorage.getItem('clientID'))
+    //console.log('From Index component', localStorage.getItem('auth-token'))
+   /* const getClientData = async () => {
+      try {
+        const clientDataResponse = await axios.get('clients/'+ data.name, {
+          headers: { 
+            'Content-Type': 'application/json',
+          }
+        })
+      console.log('ClientID: ', clientDataResponse.data[0].id_cliente)
+      localStorage.setItem('clientID', clientDataResponse.data[0].id_cliente)
+  
+      } catch (error) {
+        console.log(error)
+      }
+    }*/
+    //getClientDevices()
+    //console.log(props)
+    //console.log(clientData)
     //setClientDevices(props.clientDevices)
-  }) 
+  }, [])
 
   const fillTable = (devices) => {
     return devices.map((device, index) => {
@@ -206,7 +274,7 @@ const Index = (props) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {/*fillTable(props.clientDevices)*/}
+                  {fillTable(clientDevices)}
                   {/*<tr>
                     <th scope="row">/argon/</th>
                     <td>4,569</td>

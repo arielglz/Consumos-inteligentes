@@ -41,15 +41,12 @@ const AdminNavbar = (props) => {
 
   const navigate = useNavigate();
   const [clientData, setClientData] = useState('');
-  
-
-  useEffect(() => {
-    console.log(props)
-  }, []);
+ 
   const logout = async () => {
     //setAuth({})
 
     localStorage.removeItem('auth-token')
+    localStorage.removeItem('clientID')
     navigate('/auth/login')
   }
 

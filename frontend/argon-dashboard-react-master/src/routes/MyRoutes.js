@@ -13,6 +13,7 @@ import Locations from "components/Locations";
 import Bills from "components/Bills";
 import Consumptions from "components/Consumptions";
 import Profile from "views/examples/Profile";
+import Plugs from "components/Plugs";
 //import Home from "./Home";
 
 const token = localStorage.getItem('auth-token')
@@ -39,6 +40,7 @@ function MyRoutes(){
                <Route element={<AdminLayout />}>
                     <Route path='dashboard' element={<Index />} />
                     <Route path='devices' element={<Devices />} />
+                    <Route path='plugs' element={<Plugs />} />
                     <Route path='locations' element={<Locations />} />
                     <Route path='bills' element={<Bills />} />
                     <Route path='consumptions' element={<Consumptions />} />

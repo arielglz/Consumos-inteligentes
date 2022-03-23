@@ -26,6 +26,7 @@ import Icons from "views/examples/Icons.js";
 import Locations from "components/Locations";
 import Bills from "components/Bills";
 import Consumptions from "components/Consumptions";
+import Plugs from "components/Plugs";
 
 var routes = [
   {
@@ -43,8 +44,15 @@ var routes = [
     layout: "/admin",
   }*/,
   {
+    path: 'plugs',
+    name: 'Plugs',
+    icon: 'ni ni-button-power text-green',
+    component: Plugs,
+    layout: ""
+  },
+  {
     path: "locations",
-    name: "Direcciones",
+    name: "Localidades",
     icon: "ni ni-pin-3 text-orange",
     component: Locations,
     layout: "",
