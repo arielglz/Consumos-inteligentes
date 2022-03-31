@@ -30,6 +30,7 @@ const Consumptions = () => {
     const token = localStorage.getItem('auth-token');
     const data = jwtDecode(token);
     const [consumptions, setConsumptions] = useState([]);
+    const [locationConsumptions, setLocationConsumptions] = useState([]);
     const [initialDate, setInitialtDate] = useState('');
     const [finalDate, setFinalDate] = useState('');
     const [locationInitialDate, setLocationInitialtDate] = useState('');
@@ -106,8 +107,9 @@ const Consumptions = () => {
             })
         
             console.log(dataResponse.data)
-            setConsumptions(dataResponse.data)
-            fillTable()
+            //setConsumptions(dataResponse.data)
+            setLocationConsumptions(dataResponse.data)
+            fillLocationTable()
             setLocationChartData({
               labels: dataResponse.data.map((location) => location.alias),
               datasets: [
@@ -123,7 +125,7 @@ const Consumptions = () => {
     }
 
     const fillLocationTable = () => {
-    return consumptions.map((consumption, index) => {
+    return locationConsumptions.map((consumption, index) => {
         const { alias, ubicacion, nombre, marca, consumo_t, consumo, costo_t, costo } = consumption
         return (
         <tr key={index}>
