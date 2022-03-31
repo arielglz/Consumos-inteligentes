@@ -17,12 +17,6 @@ import {
 } from "reactstrap";
 
 // core components
-import {
-  chartOptions,
-  parseOptions,
-  chartExample1,
-  chartExample2,
-} from "variables/charts.js";
 
 import Header from "components/Headers/Header.js";
 import { useEffect } from "react";
@@ -31,16 +25,6 @@ const Bills = (props) => {
   const [activeNav, setActiveNav] = useState(1);
   const [chartExample1Data, setChartExample1Data] = useState("data1");
   const [clientDevices, setClientDevices] = useState([])
-
-  if (window.Chart) {
-    parseOptions(Chart, chartOptions());
-  }
-
-  const toggleNavs = (e, index) => {
-    e.preventDefault();
-    setActiveNav(index);
-    setChartExample1Data("data" + index);
-  };
 
   useEffect (() => {
     //console.log(props.clientDevices)
@@ -73,7 +57,7 @@ const Bills = (props) => {
       <Header />
       {/* Page content */}
       <Container className="mt--7" fluid>
-        <Row className="mt-5">
+        <Row>
           <Col className="mb-5 mb-xl-0" xl="8">
             <Card className="shadow">
               <CardHeader className="border-0">

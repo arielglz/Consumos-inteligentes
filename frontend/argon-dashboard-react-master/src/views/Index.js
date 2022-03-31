@@ -40,18 +40,16 @@ import {
 } from "reactstrap";
 
 // core components
-import {
-  chartOptions,
-  parseOptions,
-  chartExample1,
-  chartExample2,
-} from "variables/charts.js";
+import Datetime from 'react-datetime'
 
 import Header from "components/Headers/Header.js";
 import { useEffect } from "react";
 import { useOutletContext, useLocation } from "react-router-dom";
 import axios from '../api/axios'
 import jwtDecode from "jwt-decode";
+import BarChart from "components/Charts/BarChart";
+import {UserData} from './examples/Data'
+
 
 const Index = (props) => {
   const [activeNav, setActiveNav] = useState(1);
@@ -59,101 +57,152 @@ const Index = (props) => {
   const [clientDevices, setClientDevices] = useState([]);
   const [id, setId] = useState('');
   const token = localStorage.getItem('auth-token');
-  const clientID = localStorage.getItem('clientID')
   const data = jwtDecode(token);
+  const [consumptions, setConsumptions] = useState([]);
+  const [initialDate, setInitialtDate] = useState('');
+  const [finalDate, setFinalDate] = useState('');
+  const [chartData, setChartData] = useState({
+    labels: [],
+    datasets: [{
+      label: 'Consumos',
+      data: [],
+    }]
+  })
+
+  const [userData, setUserData] = useState({
+    labels: UserData.map((data) => data.year),
+    datasets: [
+      {
+        label: 'User gained',
+        data: UserData.map((data) => data.userGain)
+      }
+    ]
+  })
+
+  /*const dataex = {
+    labels: ['January', 'February', 'March',
+             'April', 'May'],
+    datasets: [
+      {
+        label: 'Rainfall',
+        backgroundColor: 'rgba(75,192,192,1)',
+        borderColor: 'rgba(0,0,0,1)',
+        borderWidth: 2,
+        data: [65, 59, 80, 81, 56]
+      }
+    ]
+  }*/
+
+  //const date = Date().today
   //const clientDevices = useOutletContext();
   const {state} = useLocation();
   
-  if (window.Chart) {
-    parseOptions(Chart, chartOptions());
-  }
-
-  const toggleNavs = (e, index) => {
-    e.preventDefault();
-    setActiveNav(index);
-    setChartExample1Data("data" + index);
-  };
-
-  
-
   useEffect (() => {
-    console.log(state)
-    const id = localStorage.getItem('clientID');
-    setId(id)
-    console.log('Using useState', id)
-    const getClientData = async () => {
-      try {
-        const clientDataResponse = await axios.get('clients/'+ state.clientEmail, {
-          headers: { 
-            'Content-Type': 'application/json',
-        }
-      })
-      //setClientData(clientDataResponse.data[0])
-      console.log('ClientID from getClientData: ', clientDataResponse.data[0].id_cliente)
-      localStorage.setItem('clientID', clientDataResponse.data[0].id_cliente)
 
-      } catch (error) {
-        console.log(error)
-      }
+    if(!(localStorage.getItem('clientID'))){
+      getClientData()
     }
-    getClientData()
-    const getClientDevices = async () => {
-      console.log('From getClientDevices', localStorage.getItem('clientID'))
-      if(localStorage.getItem('clientID') == null){return console.log('Error, clientID empty')}
-      try {
-  
-        const clientDevicesResponse = await axios.get('/devices/client/'+ localStorage.getItem('clientID'), {
-          headers: { 
-            'Content-Type': 'application/json',
-            'auth-token': token
-        }
-      })
-  
-       setClientDevices(clientDevicesResponse.data)
-  
-      } catch (error) {
-        console.log(error)
-      }
-    }
-   getClientDevices()
-    //console.log('From Index component', localStorage.getItem('clientID'))
-    //console.log('From Index component', localStorage.getItem('auth-token'))
-   /* const getClientData = async () => {
-      try {
-        const clientDataResponse = await axios.get('clients/'+ data.name, {
-          headers: { 
-            'Content-Type': 'application/json',
-          }
-        })
-      console.log('ClientID: ', clientDataResponse.data[0].id_cliente)
-      localStorage.setItem('clientID', clientDataResponse.data[0].id_cliente)
-  
-      } catch (error) {
-        console.log(error)
-      }
-    }*/
-    //getClientDevices()
-    //console.log(props)
-    //console.log(clientData)
-    //setClientDevices(props.clientDevices)
+    //getAllClientDevicesConsumptionsByClientID()
   }, [])
 
-  const fillTable = (devices) => {
-    return devices.map((device, index) => {
-      const { alias, ubicacion, nombre, marca, voltaje, estado } = device
+  useEffect(() => {
+    //getAllClientDevicesConsumptionsByClientID()
+  }, [id])
+
+  const getClientData = async () => {
+    try {
+      const clientDataResponse = await axios.get('clients/'+ state.clientEmail, {
+        headers: { 
+          'Content-Type': 'application/json',
+      }
+    })
+    //setClientData(clientDataResponse.data[0])
+    console.log('ClientID from getClientData: ', clientDataResponse.data[0].id_cliente)
+    localStorage.setItem('clientID', clientDataResponse.data[0].id_cliente)
+    setId(clientDataResponse.data[0].id_cliente)
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const getAllClientDevicesConsumptionsByClientID = async () => {
+    try {
+      if(id == null || localStorage.getItem('clientID') == null){return console.log('Error, clientID empty')}
+      const dataResponse = await axios.get('/consumptions/client/'+ localStorage.getItem('clientID'), {
+        headers: { 
+          'Content-Type': 'application/json',
+          'auth-token': token
+        }
+      })
+      setConsumptions(dataResponse.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+const getClientDevicesConsumptionsBetweenDates = async () => {
+  try {
+
+    const toQuery = {
+      id_cliente: localStorage.getItem('clientID'),
+      fecha_inicio: initialDate,
+      fecha_final: finalDate
+    }
+
+    console.log(toQuery)
+
+    const dataResponse = await axios.post('/consumptions/client/' + localStorage.getItem('clientID'), toQuery, {
+      headers: {
+        'Content-Type': 'application/json',
+        'auth-token': token
+      }
+    })
+
+    console.log(dataResponse.data)
+    setConsumptions(dataResponse.data)
+    fillTable()
+    setChartData({
+      labels: dataResponse.data.map((device) => device.nombre),
+      datasets: [
+      {
+        label: 'Costos',
+        data: dataResponse.data.map((device) => device.costo),
+      }]
+    })
+
+  } catch (error) {
+    console.log(error)
+  }
+
+}
+
+ /* useEffect(() => {
+    setChartData({})
+    setChartData({
+      labels: consumptions.map((device) => device.nombre),
+      datasets: [{
+        label: 'Consumos',
+        data: consumptions.map((device) => device.consumo),
+      }]
+    })
+    console.log(chartData)
+  }, [consumptions])*/
+
+ /* const fillChart = () => {
+    return consumptions.map((consumption))
+  }*/
+  const fillTable = () => {
+    return consumptions.map((consumption, index) => {
+      const { alias, ubicacion, nombre, marca, consumo_t, consumo, costo_t, costo } = consumption
       return (
         <tr key={index}>
           <td>{alias}</td>
           <td>{ubicacion}</td>
           <td>{nombre}</td>
           <td>{marca}</td>
-          <td>{voltaje}</td>
-          <td>
-            <Badge color="" className="badge-dot mr-4">
-              <i className={estado == 'OFF' ? "bg-warning" : 'bg-success'} />
-                {estado}
-            </Badge>
-          </td>
+          <td>{consumo_t}</td>
+          <td>{costo_t}</td>
         </tr>
       )
     })
@@ -242,13 +291,13 @@ const Index = (props) => {
             </Card>
           </Col>
         </Row>*/}
-        <Row className="mt-5">
-          <Col className="mb-5 mb-xl-0" xl="8">
-            <Card className="shadow">
+        <Row >
+          <Col className="mb-5 mb-xl-0" xl="6">
+            {/*<Card className="shadow">
               <CardHeader className="border-0">
                 <Row className="align-items-center">
                   <div className="col">
-                    <h3 className="mb-0">Mis dispositivos</h3>
+                    <h3 className="mb-0">Dispositivos con mayor consumo</h3>
                   </div>
                   {/*<div className="col text-right">
                     <Button
@@ -259,7 +308,25 @@ const Index = (props) => {
                     >
                       See all
                     </Button>
-                  </div>*/}
+                  </div>
+                </Row>
+                <Row className="align-items-center">
+                  <Col xs="6">
+                    <Col md="12" xs="4">
+                      <h3 className="mb-0">Fecha de inicio</h3>
+                    </Col>
+                    <Col md="12" xs="4">
+                      <Datetime input={true} dateFormat={'DD/MM/YYYY'} onChange={moment => setInitialtDate(moment.format('YYYY-MM-DD H:mm:ss'))}/>
+                    </Col>
+                  </Col>
+                  <Col xs="6">
+                    <Col md="12" xs="6">
+                      <h3 className="mb-0">Fecha de final</h3>
+                    </Col>
+                    <Col md="12" xs="6">
+                      <Datetime className="" input={true} dateFormat={'DD/MM/YYYY'} onClose={getClientDevicesConsumptionsBetweenDates} onChange={(moment) => setFinalDate(moment.format('YYYY-MM-DD H:mm:ss'))}/>
+                    </Col>
+                  </Col>
                 </Row>
               </CardHeader>
               <Table className="align-items-center table-flush" responsive>
@@ -269,12 +336,12 @@ const Index = (props) => {
                     <th scope="col">Ubicacion</th>
                     <th scope="col">Dispositivo</th>
                     <th scope="col">Marca</th>
-                    <th scope="col">Voltaje</th>
-                    <th scope="col">Estado</th>
+                    <th scope="col">Consumo</th>
+                    <th scope="col">Costo</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {fillTable(clientDevices)}
+                  {fillTable()}
                   {/*<tr>
                     <th scope="row">/argon/</th>
                     <td>4,569</td>
@@ -317,11 +384,11 @@ const Index = (props) => {
                       <i className="fas fa-arrow-down text-danger mr-3" />{" "}
                       46,53%
                     </td>
-                  </tr>*/}
+                  </tr>
                 </tbody>
-              </Table>
+                </Table>
             </Card>
-          </Col>
+          </Col>*/}
           {/*
           <Col xl="4">
             <Card className="shadow">
@@ -429,8 +496,31 @@ const Index = (props) => {
                   </tr>
                 </tbody>
               </Table>
-            </Card>
-          </Col>*/}
+              </Card>
+          </Col>
+          */}
+          {/*<Col xl="6">*/}
+          <Card className="shadow">
+            <CardHeader>
+              <h3>Consumos de las localidades en las ultimas 24h</h3>
+            </CardHeader>
+            <CardBody>
+              {console.log(chartData)}
+              <Bar data={chartData} />
+            </CardBody>
+          </Card>
+          </Col>
+          <Col>
+          <Card className="shadow">
+            <CardHeader>
+              <h3>Consumos de los dispositivos en las ultimas 24h</h3>
+            </CardHeader>
+            <CardBody>
+              {console.log(chartData)}
+              <Bar data={chartData} />
+            </CardBody>
+          </Card> 
+          </Col>
         </Row>
       </Container>
     </>

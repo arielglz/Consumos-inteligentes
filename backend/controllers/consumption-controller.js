@@ -29,7 +29,98 @@ const getConsumptionsByPlugID = async (req, res) => {
     res.status(200).json(response.rows);
 }
 
+const getAllDeviceConsumptionByClientID = async (req, res) => {
+    const clientID = req.params.id;
+    const response = await pool.query('SELECT localidad.alias, plug.ubicacion, dispositivo.nombre, dispositivo.marca, consumo.consumo FROM plug, dispositivo, consumo, localidad, cliente WHERE consumo.id_plug = plug.id_plug AND dispositivo.id_plug = plug.id_plug AND localidad.id_localidad = plug.id_localidad AND localidad.id_cliente = cliente.id_cliente AND cliente.id_cliente = $1', [clientID])
+    res.status(200).json(response.rows);
+}
+
+const getClientDevicesConsumptionsBetweenDates = async (req, res) => {
+    const { id_cliente, fecha_inicio, fecha_final } = req.body;
+    const query = `SELECT
+                        localidad.alias,
+                        plug.ubicacion,
+                        dispositivo.nombre,
+                        dispositivo.marca,
+                        SUM(consumo.consumo) AS consumo
+                    FROM
+                        plug,
+                        dispositivo,
+                        consumo,
+                        localidad,
+                        cliente
+                    WHERE
+                        consumo.id_plug = plug.id_plug AND
+                        dispositivo.id_plug = plug.id_plug AND
+                        localidad.id_localidad = plug.id_localidad AND
+                        localidad.id_cliente = cliente.id_cliente AND
+                        fecha::date BETWEEN $1 AND $2 AND
+                        cliente.id_cliente = $3 
+                    GROUP BY localidad.alias, plug.ubicacion, dispositivo.nombre, dispositivo.marca`
+    const response = await pool.query(query, [ fecha_inicio, fecha_final, id_cliente ])
+
+    let newArray = [];
+    response.rows.forEach(i => {
+        const { alias, ubicacion, nombre, marca, consumo } = i
+        let costo = 0 
+        if(consumo < 200) { costo = consumo * 7.88 } else {costo = consumo * 5.55 }
+        //console.log(parseFloat(consumo).toFixed(2))
+        newArray.push({
+            alias: alias,
+            ubicacion: ubicacion,
+            nombre: nombre,
+            marca: marca,
+            consumo_t: `${consumo} kWh`,
+            consumo: consumo,
+            costo_t: `${parseFloat(costo).toFixed(2)} RD$`,
+            costo: parseFloat(costo).toFixed(2)
+        })
+    });
+
+    res.status(200).json(newArray);
+
+}
+
+const getClientLocationConsumptionsBetweenDates = async (req, res) => {
+    const { id_cliente, fecha_inicio, fecha_final } = req.body;
+    const query = `SELECT
+                        localidad.alias AS "alias",
+                        SUM(consumo.consumo) AS "consumo"
+                    FROM
+                        cliente,
+                        localidad,
+                        consumo,
+                        plug
+                    WHERE
+                        consumo.id_plug = plug.id_plug AND
+                        localidad.id_localidad = plug.id_localidad AND
+                        localidad.id_cliente = cliente.id_cliente AND
+                        fecha::date BETWEEN $1 AND $2 AND
+                        cliente.id_cliente = $3
+                    GROUP BY localidad.alias`
+    const response = await pool.query(query, [ fecha_inicio, fecha_final, id_cliente ])
+
+    let newArray = [];
+    response.rows.forEach(i => {
+        const { alias, consumo } = i
+        let costo = 0 
+        if(consumo < 200) { costo = consumo * 7.8 } else {costo = consumo * 5.55 }
+        newArray.push({
+            alias: alias,
+            consumo_t: `${consumo} kWh`,
+            consumo: consumo,
+            costo_t: `${parseFloat(costo).toFixed(2)} RD$`,
+            costo: parseFloat(costo).toFixed(2)
+        })
+    });
+
+    res.status(200).json(newArray);
+}
+
 module.exports = {
+    getClientLocationConsumptionsBetweenDates,
+    getClientDevicesConsumptionsBetweenDates,
+    getAllDeviceConsumptionByClientID,
     getConsumptionByLocationID,
     getConsumptionsByPlugID,
     getAllConsumptions

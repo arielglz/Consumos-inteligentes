@@ -28,6 +28,7 @@ import Index from "views/Index";
 import routes from "routes.js";
 import jwtDecode from "jwt-decode";
 import axios from '../api/axios'
+import Header from "components/Headers/Header";
 
 const Admin = (props) => {
   //const mainContent = React.useRef(null);
@@ -121,7 +122,7 @@ const Admin = (props) => {
         {...props}
         routes={routes}
         logo={{
-          innerLink: "/admin/index",
+          innerLink: "/dashboard",
           imgSrc: require("../assets/img/brand/argon-react.png").default,
           imgAlt: "...",
         }}

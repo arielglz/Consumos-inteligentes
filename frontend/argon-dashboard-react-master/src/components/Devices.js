@@ -28,12 +28,6 @@ import {
 } from "reactstrap";
 
 // core components
-import {
-  chartOptions,
-  parseOptions,
-  chartExample1,
-  chartExample2,
-} from "variables/charts.js";
 
 import Header from "components/Headers/Header.js";
 import Select from 'react-select'
@@ -63,16 +57,6 @@ const Index = (props) => {
   const [successResponse, setSuccessResponse] = useState('')
   const [willUpdate, setWillUpdate] = useState(false);
   const [deviceID, setDeviceID] = useState('');
-  
-  if (window.Chart) {
-    parseOptions(Chart, chartOptions());
-  }
-
-  const toggleNavs = (e, index) => {
-    e.preventDefault();
-    setActiveNav(index);
-    setChartExample1Data("data" + index);
-  };
 
   const [show, setShow] = useState(false);
 
@@ -322,8 +306,8 @@ const Index = (props) => {
       <Header />
       {/* Page content */}
       <Container className="mt--7" fluid>
-        <Row className="mt-5">
-          <Col className="mb-5 mb-xl-0" xl="8">
+        <Row>
+          <Col className="mb-5 mb-xl-0" xl="14">
             <Card className="shadow">
               <CardHeader className="border-0">
                 <Row className="align-items-center">

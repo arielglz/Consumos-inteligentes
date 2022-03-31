@@ -1,7 +1,5 @@
 import { React, useState } from "react";
-import Chart from "chart.js";
-// react plugin used to create charts
-import { Line, Bar } from "react-chartjs-2";
+
 // reactstrap components
 import {
   Alert,
@@ -27,19 +25,12 @@ import {
   FormGroup
 } from "reactstrap";
 
-// core components
-import {
-  chartOptions,
-  parseOptions,
-} from "variables/charts.js";
-
 import Header from "components/Headers/Header.js";
 import { useEffect } from "react";
 import axios from '../api/axios'
 
 const Locations = (props) => {
   const [activeNav, setActiveNav] = useState(1);
-  const [chartExample1Data, setChartExample1Data] = useState("data1");
   const [clientLocations, setClientLocations] = useState([])
   const clientID = localStorage.getItem('clientID')
   const token = localStorage.getItem('auth-token');
@@ -69,16 +60,6 @@ const Locations = (props) => {
     setErrMsg('')
     setShow(!show);
   }
-
-  if (window.Chart) {
-    parseOptions(Chart, chartOptions());
-  }
-
-  const toggleNavs = (e, index) => {
-    e.preventDefault();
-    setActiveNav(index);
-    setChartExample1Data("data" + index);
-  };
 
   useEffect (() => {
     //console.log(props.clientDevices)
@@ -269,7 +250,7 @@ const Locations = (props) => {
       <Header />
       {/* Page content */}
       <Container className="mt--7" fluid>
-        <Row className="mt-5">
+        <Row>
           <Col className="mb-5 mb-xl-0" xl="10">
             <Card className="shadow">
               <CardHeader className="border-0">
