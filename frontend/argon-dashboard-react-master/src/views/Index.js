@@ -49,18 +49,18 @@ import axios from '../api/axios'
 import jwtDecode from "jwt-decode";
 import BarChart from "components/Charts/BarChart";
 import {UserData} from './examples/Data'
+import moment from 'moment';
 
 
 const Index = (props) => {
   const [activeNav, setActiveNav] = useState(1);
   const [chartExample1Data, setChartExample1Data] = useState("data1");
-  const [clientDevices, setClientDevices] = useState([]);
-  const [id, setId] = useState('');
+
   const token = localStorage.getItem('auth-token');
-  const data = jwtDecode(token);
+  const decryptedToken = jwtDecode(token);
   const [consumptions, setConsumptions] = useState([]);
-  const [initialDate, setInitialtDate] = useState('');
-  const [finalDate, setFinalDate] = useState('');
+  const [initialDate, setInitialtDate] = useState(moment().subtract(1, 'day').format('YYYY-MM-DD H:mm:ss'));
+  const [finalDate, setFinalDate] = useState(moment().format('YYYY-MM-DD H:mm:ss'));
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [{
@@ -68,114 +68,96 @@ const Index = (props) => {
       data: [],
     }]
   })
-
-  const [userData, setUserData] = useState({
-    labels: UserData.map((data) => data.year),
-    datasets: [
-      {
-        label: 'User gained',
-        data: UserData.map((data) => data.userGain)
-      }
-    ]
+  const [chartLocationData, setChartLocationData] = useState({
+    labels: [],
+    datasets: [{
+      label: 'Consumos',
+      data: [],
+    }]
   })
-
-  /*const dataex = {
-    labels: ['January', 'February', 'March',
-             'April', 'May'],
-    datasets: [
-      {
-        label: 'Rainfall',
-        backgroundColor: 'rgba(75,192,192,1)',
-        borderColor: 'rgba(0,0,0,1)',
-        borderWidth: 2,
-        data: [65, 59, 80, 81, 56]
-      }
-    ]
-  }*/
-
-  //const date = Date().today
-  //const clientDevices = useOutletContext();
-  const {state} = useLocation();
+  const [realTimeChartData, SetRealTimeChartData] = useState({
+    labels: [],
+    datasets: [{
+      label: 'Consumos',
+      data: [],
+    }]
+  })
   
   useEffect (() => {
 
-    if(!(localStorage.getItem('clientID'))){
-      getClientData()
-    }
-    //getAllClientDevicesConsumptionsByClientID()
+    getClientDevicesConsumptionsBetweenDates()
+    getClientLocationsConsumptionsBetweenDates()
   }, [])
 
-  useEffect(() => {
-    //getAllClientDevicesConsumptionsByClientID()
-  }, [id])
-
-  const getClientData = async () => {
+  const getClientLocationsConsumptionsBetweenDates = async () => {
     try {
-      const clientDataResponse = await axios.get('clients/'+ state.clientEmail, {
-        headers: { 
-          'Content-Type': 'application/json',
+
+      const toQuery = {
+        id_cliente: decryptedToken.id,
+        fecha_inicio: initialDate,
+        fecha_final: finalDate
       }
-    })
-    //setClientData(clientDataResponse.data[0])
-    console.log('ClientID from getClientData: ', clientDataResponse.data[0].id_cliente)
-    localStorage.setItem('clientID', clientDataResponse.data[0].id_cliente)
-    setId(clientDataResponse.data[0].id_cliente)
 
-    } catch (error) {
-      console.log(error)
-    }
-  }
+      console.log(toQuery)
 
-  const getAllClientDevicesConsumptionsByClientID = async () => {
-    try {
-      if(id == null || localStorage.getItem('clientID') == null){return console.log('Error, clientID empty')}
-      const dataResponse = await axios.get('/consumptions/client/'+ localStorage.getItem('clientID'), {
-        headers: { 
+      const dataResponse = await axios.post('/consumptions/location/' + decryptedToken.id, toQuery, {
+        headers: {
           'Content-Type': 'application/json',
           'auth-token': token
         }
       })
-      setConsumptions(dataResponse.data)
+
+      setChartLocationData({
+        labels: dataResponse.data.map((device) => device.alias),
+        datasets: [
+        {
+          label: 'Costos',
+          data: dataResponse.data.map((device) => device.costo),
+        }]
+      })
+
     } catch (error) {
       console.log(error)
     }
+
   }
+  
 
-const getClientDevicesConsumptionsBetweenDates = async () => {
-  try {
+  const getClientDevicesConsumptionsBetweenDates = async () => {
+    try {
 
-    const toQuery = {
-      id_cliente: localStorage.getItem('clientID'),
-      fecha_inicio: initialDate,
-      fecha_final: finalDate
+      const toQuery = {
+        id_cliente: decryptedToken.id,
+        fecha_inicio: initialDate,
+        fecha_final: finalDate
+      }
+
+      console.log(toQuery)
+
+      const dataResponse = await axios.post('/consumptions/client/' + decryptedToken.id, toQuery, {
+        headers: {
+          'Content-Type': 'application/json',
+          'auth-token': token
+        }
+      })
+
+      console.log(dataResponse.data)
+      setConsumptions(dataResponse.data)
+      fillTable()
+      setChartData({
+        labels: dataResponse.data.map((device) => device.nombre),
+        datasets: [
+        {
+          label: 'Costos',
+          data: dataResponse.data.map((device) => device.costo),
+        }]
+      })
+
+    } catch (error) {
+      console.log(error)
     }
 
-    console.log(toQuery)
-
-    const dataResponse = await axios.post('/consumptions/client/' + localStorage.getItem('clientID'), toQuery, {
-      headers: {
-        'Content-Type': 'application/json',
-        'auth-token': token
-      }
-    })
-
-    console.log(dataResponse.data)
-    setConsumptions(dataResponse.data)
-    fillTable()
-    setChartData({
-      labels: dataResponse.data.map((device) => device.nombre),
-      datasets: [
-      {
-        label: 'Costos',
-        data: dataResponse.data.map((device) => device.costo),
-      }]
-    })
-
-  } catch (error) {
-    console.log(error)
   }
-
-}
 
  /* useEffect(() => {
     setChartData({})
@@ -210,7 +192,6 @@ const getClientDevicesConsumptionsBetweenDates = async () => {
 
   return (
     <>
-      <Header />
       {/* Page content */}
       <Container className="mt--7" fluid>
       {/*  <Row>
@@ -291,8 +272,21 @@ const getClientDevicesConsumptionsBetweenDates = async () => {
             </Card>
           </Col>
         </Row>*/}
+        <Row>
+          <Col className="mb-5 mb-xl-3" xl="5">
+            <Card className="shadow">
+              <CardHeader>
+                <h3>Consumo de mis dispositivos en tiempo real</h3>
+              </CardHeader>
+              <CardBody>
+                {console.log(realTimeChartData)}
+                <Bar data={realTimeChartData} />
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
         <Row >
-          <Col className="mb-5 mb-xl-0" xl="6">
+          <Col className="mb-5 mb-xl-3" xl="5">
             {/*<Card className="shadow">
               <CardHeader className="border-0">
                 <Row className="align-items-center">
@@ -505,12 +499,12 @@ const getClientDevicesConsumptionsBetweenDates = async () => {
               <h3>Consumos de las localidades en las ultimas 24h</h3>
             </CardHeader>
             <CardBody>
-              {console.log(chartData)}
-              <Bar data={chartData} />
+              {console.log(chartLocationData)}
+              <Bar data={chartLocationData} />
             </CardBody>
           </Card>
           </Col>
-          <Col>
+          <Col className="mb-5 mb-xl-3" xl="5">
           <Card className="shadow">
             <CardHeader>
               <h3>Consumos de los dispositivos en las ultimas 24h</h3>

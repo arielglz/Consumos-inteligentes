@@ -54,7 +54,6 @@ const Bills = (props) => {
 
   return (
     <>
-      <Header />
       {/* Page content */}
       <Container className="mt--7" fluid>
         <Row>
@@ -77,6 +76,16 @@ const Bills = (props) => {
                   </div>*/}
                 </Row>
               </CardHeader>
+             {/* <Accordion defaultActiveKey="0">
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    Accordion 1
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    Contenido del accordion
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>*/}
               <Table className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
                   <tr>

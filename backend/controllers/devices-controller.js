@@ -12,7 +12,7 @@ const pool = new Pool({
 });
 
 const schemaDeviceRegistration = Joi.object({
-    nombre: Joi.string().min(4).max(40).required(),
+    nombre: Joi.string().min(2).max(40).required(),
     marca: Joi.string().min(2).max(40).allow(''),
     serial: Joi.string().min(4).max(40).required(),
     voltaje: Joi.number().required(),
@@ -30,10 +30,6 @@ const getDevicesByID = async (req, res) => {
 }
 
 const getDevicesByClientID = async (req, res) => {
-    console.log(req.params.id)
-    if(toString(req.params.id) === 'null'){
-        return res.status(400).json({msg: 'ClientID vacio, favor de revisar'})
-    }
     const response =  await pool.query('SELECT localidad.alias, plug.ubicacion, dispositivo.nombre, dispositivo.marca, dispositivo.voltaje, plug.estado, dispositivo.id_dispositivo FROM dispositivo, plug, localidad WHERE localidad.id_localidad = plug.id_localidad AND plug.id_plug = dispositivo.id_plug AND localidad.id_cliente = $1', [req.params.id])
     if (response.rows.length == 0) {
         res.status(404).json({msg: 'El usuario no tiene dispositivos creados, favor de crear algunos.'});
@@ -59,10 +55,16 @@ const registerDevice = async(req, res) => {
 
     //Validate if email already exists
     const isDeviceExist = await pool.query('SELECT * FROM dispositivo WHERE serial = $1', [req.body.serial]);
-    //console.log(isEmailExist.rowCount);
+    const isDeviceOnPlugExist = await pool.query('SELECT * FROM dispositivo WHERE id_plug = $1', [req.body.id_plug]);
     if (isDeviceExist.rowCount > 0) {
         return res.status(400).json({
             error: 'El dispositivo introducido ya está siendo utilizado, favor de ingresar otro.'
+        })
+    }
+
+    if (isDeviceOnPlugExist.rowCount > 0) {
+        return res.status(400).json({
+            error: 'El plug en donde intentas registrar el dispositivo está lleno, favor de utilizar otro plug.'
         })
     }
 

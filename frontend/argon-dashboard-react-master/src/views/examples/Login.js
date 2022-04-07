@@ -72,7 +72,7 @@ const Login = () => {
               JSON.stringify({email: email, password: pwd}),
               {
                   headers: { 
-                      'Content-Type': 'application/json',
+                      'Content-Type': 'application/json'
                   }
               }
           )
@@ -92,7 +92,7 @@ const Login = () => {
           if (!error?.response) {
               setErrMsg('No server response');
           } else if (error.response?.status === 400) {
-              setErrMsg('El usuario o clave no existe');
+              setErrMsg('El email ingresado no ha sido encontrado, favor de ingresar un nuevo email.');
           } else if (error.response?.status === 401) {
               setErrMsg('Acceso denegado, favor de verificar password');
           } else {
@@ -165,7 +165,7 @@ const Login = () => {
             </div>*/}
             <div className="text-center">
               <Button className="my-4" color="primary" type="submit" onClick={handleSubmit}>
-                Sign in
+                Entrar
               </Button>
             </div>
           </Form>
@@ -173,22 +173,9 @@ const Login = () => {
       </Card>
       <Row className="mt-3">
         <Col xs="6">
-          <a
-            className="text-light"
-            href="#pablo"
-            onClick={(e) => e.preventDefault()}
-          >
-            <small>Olvide mi contraseña</small>
-          </a>
+          <Link to="/auth/forgot" className="text-light"><small>Olvide mi contraseña</small></Link>
         </Col>
         <Col className="text-right" xs="6">
-          {/*<a
-            className="text-light"
-            href="#pablo"
-            onClick={(e) => e.preventDefault()}
-          >
-            <small>Crear nueva cuenta</small>
-          </a>*/}
           <Link to="/auth/register" className="text-light"><small>Crear nueva cuenta</small></Link>
         </Col>
       </Row>

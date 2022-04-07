@@ -25,15 +25,14 @@ import {
   FormGroup
 } from "reactstrap";
 
-import Header from "components/Headers/Header.js";
 import { useEffect } from "react";
 import axios from '../api/axios'
+import jwtDecode from "jwt-decode";
 
 const Locations = (props) => {
-  const [activeNav, setActiveNav] = useState(1);
-  const [clientLocations, setClientLocations] = useState([])
-  const clientID = localStorage.getItem('clientID')
   const token = localStorage.getItem('auth-token');
+  const decryptedToken = jwtDecode(token);
+  const [clientLocations, setClientLocations] = useState([])
 
   const [locationAlias, setLocationAlias] = useState('');
   const [locationDireccion, setLocationDireccion] = useState('');
@@ -62,8 +61,6 @@ const Locations = (props) => {
   }
 
   useEffect (() => {
-    //console.log(props.clientDevices)
-    //setClientDevices(props.clientDevices)
     getLocations()
   }, []) 
 
@@ -71,7 +68,7 @@ const Locations = (props) => {
   const getLocations = async () => {
     try {
 
-      const clientLocationsResponse = await axios.get('/locations/client/'+ clientID, {
+      const clientLocationsResponse = await axios.get('/locations/client/'+ decryptedToken.id, {
         headers: { 
           'Content-Type': 'application/json',
           'auth-token': token
@@ -139,7 +136,7 @@ const Locations = (props) => {
       municipio: locationMunicpio,
       ciudad: locationCiudad,
       direccion: locationDireccion,
-      id_cliente: clientID
+      id_cliente: decryptedToken.id
     }
 
     console.log(location)
@@ -154,7 +151,6 @@ const Locations = (props) => {
       setSuccessResponse(registrationResponse.data.msg)
       getLocations()
     } catch (error) {
-      //console.log(error)
       if (!error?.response) {
           setErrMsg('No Server Response')
       } else if (error.response?.status === 400) {
@@ -168,7 +164,6 @@ const Locations = (props) => {
   }
 
   const deleteLocation = async (id) => {
-    //if(alert('¿Usted está seguro que desar eliminar el dispositivo?')){
       try {
         const deleteResponse = await axios.delete('/locations/' + id, {
           headers: {
@@ -177,7 +172,6 @@ const Locations = (props) => {
           }
         })
         console.log(deleteResponse.data)
-        //setSuccessResponse(registrationResponse.data.msg)
         getLocations()
       } catch (error) {
         console.log(error)
@@ -186,7 +180,6 @@ const Locations = (props) => {
   }
 
   const updateLocation = async (id) => {
-    //e.preventDefault()
     setLocationID(id)
     setWillUpdate(true)
     handleShow()
@@ -210,7 +203,6 @@ const Locations = (props) => {
   }
 
   const submitUpdate = async(id) => {
-   // e.preventDefault()
    const location = {
     alias: locationAlias,
     pais: locationPais,
@@ -218,7 +210,7 @@ const Locations = (props) => {
     municipio: locationMunicpio,
     ciudad: locationCiudad,
     direccion: locationDireccion,
-    id_cliente: clientID
+    id_cliente: decryptedToken.id
   }
     
     try {
@@ -232,7 +224,6 @@ const Locations = (props) => {
       setSuccessResponse(updateResponse.data.msg)
       getLocations()
     } catch (error) {
-      //console.log(error)
       if (!error?.response) {
           setErrMsg('No Server Response')
       } else if (error.response?.status === 400) {
@@ -247,7 +238,6 @@ const Locations = (props) => {
 
   return (
     <>
-      <Header />
       {/* Page content */}
       <Container className="mt--7" fluid>
         <Row>

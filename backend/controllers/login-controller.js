@@ -27,9 +27,9 @@ const authClient = async (req, res) => {
     }
 
     const isEmailExist = await pool.query('SELECT email FROM cliente WHERE email = $1', [req.body.email]);
-    const { rows } = await pool.query('SELECT nombres, apellidos, email, password FROM cliente WHERE email = $1', [req.body.email]);
+    const { rows } = await pool.query('SELECT id_cliente, nombres, apellidos, email, password FROM cliente WHERE email = $1', [req.body.email]);
 
-    if (!isEmailExist.rowCount) {
+    if (isEmailExist.rowCount === 0) {
         return res.status(400).json({
             error: "El email ingresado no ha sido encontrado, favor de ingresar un nuevo email."
         })

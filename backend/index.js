@@ -14,9 +14,9 @@ const app = express();
 const allowedOrigins = [
     'http://localhost:3050',
     'http://172.20.10.6:3050',
+    'http://10.0.0.5:3050',
+    'http://10.0.0.3:3050',
     'http://172.20.10.5:3050',
-    '*',
-    '*://localhost:*/*',
 ];
 
 const corsOptions = {
@@ -37,6 +37,14 @@ app.use(express.json());
 app.use(cors(corsOptions));
 //app.options('*', cors())
 //app.use(history());
+/*
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });*/
+
+app.options('*', cors())
 
 //Routes
 app.use('/', require('./routes/clients'));
@@ -56,6 +64,6 @@ app.set({
 })*/
 
 //Starting server
-app.listen(app.get(process.env.PORT) || 3000,  () => {
+app.listen(app.get(process.env.PORT) || 4000,  () => {
     console.log(`The backend server is listening at port: ${process.env.PORT}`)
 })

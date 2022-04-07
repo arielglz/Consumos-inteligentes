@@ -53,36 +53,32 @@ const Register = () => {
   const errRef = useRef()
 
   const [nombres, setNombres] = useState('');
-  const [validNombres, setValidNombres] = useState(false);
-  const [nombresFocus, setNombresFocus] = useState(false);
+  const [validNombres, setValidNombres] = useState();
+  const [nombresFocus, setNombresFocus] = useState();
 
   const [apellidos, setApellidos] = useState('');
-  const [validApellidos, setValidApellidos] = useState(false);
-  const [apellidoFocus, setApellidosFocus] = useState(false);
+  const [validApellidos, setValidApellidos] = useState();
+  const [apellidoFocus, setApellidosFocus] = useState();
 
   const [numero, setNumero] = useState('');
-  const [validNumero, setValidNumero] = useState(false);
-  const [numeroFocus, setNumeroFocus] = useState(false);
+  const [validNumero, setValidNumero] = useState();
+  const [numeroFocus, setNumeroFocus] = useState();
 
   const [email, setEmail] = useState('');
-  const [validEmail, setValidEmail] = useState(false);
-  const [emailFocus, setEmailFocus] = useState(false);
+  const [validEmail, setValidEmail] = useState();
+  const [emailFocus, setEmailFocus] = useState();
 
   const [pwd, setPwd] = useState('');
-  const [validPwd, setValidPwd] = useState(false);
-  const [pwdFocus, setPwdFocus] = useState(false);
+  const [validPwd, setValidPwd] = useState();
+  const [pwdFocus, setPwdFocus] = useState();
 
   const [matchPwd, setMatchPwd] = useState('');
-  const [validMatch, setValidMatch] = useState(false);
-  const [matchFocus, setMatchFocus] = useState(false);
+  const [validMatch, setValidMatch] = useState();
+  const [matchFocus, setMatchFocus] = useState();
 
   const [errMsg, setErrMsg] = useState('');
-  const [success, setSuccess] = useState(false);
+  const [success, setSuccess] = useState();
   const [successResponse, setSuccessResponse] = useState('')
-
-  useEffect(() => {
-      //emailRef.current.focus();
-  }, [])
 
   useEffect(() => {
       nombres.length >= 4  ? setValidNombres(true): setValidNombres(false)
@@ -173,12 +169,12 @@ const Register = () => {
                   <Col xs="8">
                     <h1 className="mb-0">Registro</h1>
                   </Col>
-                    <Alert color="danger" className={errMsg ? "alert alert-danger" : "offscreen"}>
-                      {errMsg}
-                    </Alert>
-                    <Alert color="success" className={successResponse ? "alert alert-success" : "offscreen"}>
-                      {successResponse}
-                    </Alert>
+                  <Alert color="danger" className={errMsg ? "alert alert-danger" : "offscreen"}>
+                    {errMsg}
+                  </Alert>
+                  <Alert color="success" className={successResponse ? "alert alert-success" : "offscreen"}>
+                    {successResponse}
+                  </Alert>
                 </Row>
               </CardHeader>
               <CardBody>
@@ -271,7 +267,7 @@ const Register = () => {
                             className="form-control-label"
                             htmlFor="input-email"
                           >
-                            Email address
+                            Email
                           </label>
                           <Input
                             placeholder="micorreo@ejemplo.com"

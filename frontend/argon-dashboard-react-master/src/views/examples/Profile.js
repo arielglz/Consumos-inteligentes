@@ -18,6 +18,7 @@
 
 // reactstrap components
 import {
+  Alert,
   Button,
   Card,
   CardHeader,
@@ -31,15 +32,139 @@ import {
 } from "reactstrap";
 // core components
 import UserHeader from "components/Headers/UserHeader.js";
+import jwtDecode from "jwt-decode";
+import axios from '../../api/axios'
+import { useEffect, useState } from "react";
 
 const Profile = () => {
+
+  const token = localStorage.getItem('auth-token');
+  const decryptedToken = jwtDecode(token);
+  const [clientInfo, setClientInfo] = useState({
+    id_cliente: '',
+    nombres: '',
+    apellidos: '',
+    numero: '',
+    email: ''
+  })
+  const [isDisabled, setIsDisabled] = useState(true)
+  const [nombres, setNombres] = useState('');
+  const [validNombres, setValidNombres] = useState();
+  const [nombresFocus, setNombresFocus] = useState();
+
+  const [apellidos, setApellidos] = useState('');
+  const [validApellidos, setValidApellidos] = useState();
+  const [apellidoFocus, setApellidosFocus] = useState();
+
+  const [numero, setNumero] = useState('');
+  const [validNumero, setValidNumero] = useState();
+  const [numeroFocus, setNumeroFocus] = useState();
+
+  const [email, setEmail] = useState('');
+  const [validEmail, setValidEmail] = useState();
+  const [emailFocus, setEmailFocus] = useState();
+
+  const [pwd, setPwd] = useState('');
+  const [validPwd, setValidPwd] = useState();
+  const [pwdFocus, setPwdFocus] = useState();
+
+  const [matchPwd, setMatchPwd] = useState('');
+  const [validMatch, setValidMatch] = useState();
+  const [matchFocus, setMatchFocus] = useState();
+
+  const [errMsg, setErrMsg] = useState('');
+  const [success, setSuccess] = useState();
+  const [successResponse, setSuccessResponse] = useState('')
+
+  useEffect(() => {
+    getClientInfo()
+  }, [])
+
+  const getClientInfo = async () => {
+    try {
+      const clientInfoResponse = await axios.get(`/clients/data/${decryptedToken.id}`, {
+        headers: { 
+          'Content-Type': 'application/json',
+          'auth-token': token
+        }
+      })
+      console.log(clientInfoResponse.data[0])
+      setNombres(clientInfoResponse.data[0].nombres)
+      setApellidos(clientInfoResponse.data[0].apellidos)
+      setNumero(clientInfoResponse.data[0].numero)
+      setEmail(clientInfoResponse.data[0].email)
+      setClientInfo({
+        id_cliente: clientInfoResponse.data[0].id_cliente,
+        nombres: clientInfoResponse.data[0].nombres,
+        apellidos: clientInfoResponse.data[0].apellidos,
+        numero: clientInfoResponse.data[0].numero,
+        email: clientInfoResponse.data[0].email
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleEdit = (e) => {
+    e.preventDefault();
+    isDisabled ? setIsDisabled(false) : setIsDisabled(true)
+    
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    try {
+      const client = {
+          nombres: nombres,
+          apellidos: apellidos,
+          numero: numero,
+          email: email,
+          password: pwd
+      }
+      const response = await axios.put(`/clients/${decryptedToken.id}`, 
+          client,
+          {
+              headers: {
+                  'Content-Type': 'application/json'
+              }
+          })
+      //console.log((response))
+      setSuccessResponse(response.data.message)
+      setSuccess(true);   
+      //setTimeout(() => {console.log('something')}, 5000);
+      //navigate('/login', { replace: true })
+  } catch (error) {
+      if (!error?.response) {
+          setErrMsg('No Server Response')
+      } else if (error.response?.status === 409) {
+          console.log(error.response.data)
+          setErrMsg(error.response.data.error)
+      } else {
+          console.log(error.response)
+          setErrMsg('Update failed')
+      }
+      //errRef.current.focus();     
+  }
+  }
+    useEffect(() => {
+      //const result = PWD_REGEX.test(pwd);
+      setValidPwd(true)
+      const match = pwd === matchPwd;
+      setValidMatch(match);
+  }, [pwd, matchPwd])
+
+  useEffect(() => {
+      setErrMsg('');
+      setSuccessResponse('');
+  }, [email, pwd, matchPwd, numero])
+
   return (
     <>
-      <UserHeader />
+      {/*<UserHeader />*/}
       {/* Page content */}
       <Container className="mt--7" fluid>
         <Row>
-          <Col className="order-xl-2 mb-5 mb-xl-0" xl="4">
+          {/*<Col className="order-xl-2 mb-5 mb-xl-0" xl="4">
             <Card className="card-profile shadow">
               <Row className="justify-content-center">
                 <Col className="order-lg-2" lg="3">
@@ -127,22 +252,21 @@ const Profile = () => {
                 </div>
               </CardBody>
             </Card>
-          </Col>
+          </Col>*/}
           <Col className="order-xl-1" xl="8">
             <Card className="bg-secondary shadow">
               <CardHeader className="bg-white border-0">
                 <Row className="align-items-center">
                   <Col xs="8">
-                    <h3 className="mb-0">My account</h3>
+                    <h3 className="mb-0">Mi cuenta</h3>
                   </Col>
                   <Col className="text-right" xs="4">
                     <Button
                       color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
+                      onClick={(e) => handleEdit(e)}
                       size="sm"
                     >
-                      Settings
+                      Editar
                     </Button>
                   </Col>
                 </Row>
@@ -150,40 +274,65 @@ const Profile = () => {
               <CardBody>
                 <Form>
                   <h6 className="heading-small text-muted mb-4">
-                    User information
+                    Información del cliente
                   </h6>
                   <div className="pl-lg-4">
                     <Row>
                       <Col lg="6">
                         <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-username"
-                          >
-                            Username
+                          <label className="form-control-label">
+                            Nombres
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue="lucky.jesse"
-                            id="input-username"
-                            placeholder="Username"
+                            disabled={isDisabled}
                             type="text"
+                            value={nombres}
+                            onChange={(e) => setNombres(e.target.value)}
                           />
                         </FormGroup>
                       </Col>
                       <Col lg="6">
                         <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-email"
-                          >
-                            Email address
+                          <label className="form-control-label" >
+                            Apellidos
                           </label>
                           <Input
                             className="form-control-alternative"
-                            id="input-email"
-                            placeholder="jesse@example.com"
+                            disabled={isDisabled}
+                            type="text"
+                            value={apellidos}
+                            onChange={(e) => setApellidos(e.target.value)}
+                          />
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col lg="6">
+                        <FormGroup>
+                          <label className="form-control-label" >
+                            Telefono
+                          </label>
+                          <Input
+                            className="form-control-alternative"
+                            disabled={isDisabled}
+                            type="phone"
+                            value={numero}
+                            onChange={(e) => setNumero(e.target.value)}
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col lg="6">
+                        <FormGroup>
+                          <label className="form-control-label">
+                            Email
+                          </label>
+                          <Input
+                            className="form-control-alternative"
+                            disabled={isDisabled}
                             type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                           />
                         </FormGroup>
                       </Col>
@@ -191,137 +340,59 @@ const Profile = () => {
                     <Row>
                       <Col lg="6">
                         <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-first-name"
-                          >
-                            First name
+                          <label className="form-control-label" >
+                            Nueva Contraseña
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue="Lucky"
-                            id="input-first-name"
-                            placeholder="First name"
-                            type="text"
+                            placeholder="Contraseña"
+                            disabled={isDisabled}
+                            type="password"
+                            value={pwd}
+                            onChange={(e) => setPwd(e.target.value)}
                           />
                         </FormGroup>
                       </Col>
                       <Col lg="6">
                         <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-last-name"
-                          >
-                            Last name
+                          <label className="form-control-label" >
+                            Confirmar Contraseña
                           </label>
                           <Input
+                            placeholder="Confirmar contraseña"
+                            disabled={isDisabled}
+                            type="password"
+                            value={matchPwd}
                             className="form-control-alternative"
-                            defaultValue="Jesse"
-                            id="input-last-name"
-                            placeholder="Last name"
-                            type="text"
-                          />
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                  </div>
-                  <hr className="my-4" />
-                  {/* Address */}
-                  <h6 className="heading-small text-muted mb-4">
-                    Contact information
-                  </h6>
-                  <div className="pl-lg-4">
-                    <Row>
-                      <Col md="12">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-address"
-                          >
-                            Address
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            defaultValue="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
-                            id="input-address"
-                            placeholder="Home Address"
-                            type="text"
+                            onChange={(e) => setMatchPwd(e.target.value)}
                           />
                         </FormGroup>
                       </Col>
                     </Row>
                     <Row>
-                      <Col lg="4">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-city"
+                      <Col xs='10'>
+                      <Button 
+                        className="mt-2 text-right" 
+                        color="success" 
+                        onClick={(e) => handleSubmit(e)}
+                        disabled={!validMatch ? true : false}
                           >
-                            City
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            defaultValue="New York"
-                            id="input-city"
-                            placeholder="City"
-                            type="text"
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col lg="4">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-country"
-                          >
-                            Country
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            defaultValue="United States"
-                            id="input-country"
-                            placeholder="Country"
-                            type="text"
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col lg="4">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-country"
-                          >
-                            Postal code
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="input-postal-code"
-                            placeholder="Postal code"
-                            type="number"
-                          />
-                        </FormGroup>
+                        Actualizar
+                      </Button>
                       </Col>
                     </Row>
-                  </div>
-                  <hr className="my-4" />
-                  {/* Description */}
-                  <h6 className="heading-small text-muted mb-4">About me</h6>
-                  <div className="pl-lg-4">
-                    <FormGroup>
-                      <label>About Me</label>
-                      <Input
-                        className="form-control-alternative"
-                        placeholder="A few words about you ..."
-                        rows="4"
-                        defaultValue="A beautiful Dashboard for Bootstrap 4. It is Free and
-                        Open Source."
-                        type="textarea"
-                      />
-                    </FormGroup>
                   </div>
                 </Form>
               </CardBody>
             </Card>
+          </Col>
+          <Col className="order-xl-1" xl="4">
+            <Alert color="danger" className={errMsg ? "alert alert-danger alert-shown" : "alert-hidden"} >
+              <b>{errMsg}</b>
+            </Alert>
+            <Alert color="success" className={success ? "alert alert-success alert-shown" : "alert-hidden"} onTransitionEnd={() => setSuccess(false)}>
+              <b>{successResponse}</b>
+            </Alert>
           </Col>
         </Row>
       </Container>

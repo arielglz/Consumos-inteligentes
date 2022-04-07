@@ -14,6 +14,7 @@ import Bills from "components/Bills";
 import Consumptions from "components/Consumptions";
 import Profile from "views/examples/Profile";
 import Plugs from "components/Plugs";
+import ForgotPwd from "views/examples/ForgotPwd";
 //import Home from "./Home";
 
 const token = localStorage.getItem('auth-token')
@@ -27,6 +28,7 @@ function MyRoutes(){
             <Route path="auth" element={<LayoutAuth />} >
                 <Route path="login" element={<Login />} />
                 <Route path="register" element={<Register />} />
+                <Route path="forgot" element={<ForgotPwd />} />
             </Route>
 
 

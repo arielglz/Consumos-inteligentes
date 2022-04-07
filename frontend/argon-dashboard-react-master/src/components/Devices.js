@@ -37,10 +37,11 @@ import axios from '../api/axios'
 import jwtDecode from "jwt-decode";
 
 const Index = (props) => {
-  const [activeNav, setActiveNav] = useState(1);
-  const [chartExample1Data, setChartExample1Data] = useState("data1");
-  const [clientDevices, setClientDevices] = useState([]);
   const token = localStorage.getItem('auth-token');
+  const decryptedToken = jwtDecode(token);
+
+
+  const [clientDevices, setClientDevices] = useState([]);
   //const clientDevices = useOutletContext();
   const {state} = useLocation();
   const [clientLocations, setClientLocations] = useState([])
@@ -77,16 +78,13 @@ const Index = (props) => {
   }, [])
 
   const getClientDevices = async () => {
-    //console.log('From getClientDevices', localStorage.getItem('clientID'))
-    if(localStorage.getItem('clientID') == null){return console.log('Error, clientID empty')}
     try {
-      const clientDevicesResponse = await axios.get('/devices/client/'+ localStorage.getItem('clientID'), {
+      const clientDevicesResponse = await axios.get('/devices/client/'+ decryptedToken.id, {
         headers: { 
           'Content-Type': 'application/json',
           'auth-token': token
       }
     })
-     //console.log('From getClientDevices:', clientDevicesResponse.data)
      setClientDevices(clientDevicesResponse.data)
 
     } catch (error) {
@@ -98,8 +96,7 @@ const Index = (props) => {
   useEffect(() => {
     const getLocationsByUserID = async () => {
       try {
-  
-        const clientLocationsResponse = await axios.get('/locations/client/'+ localStorage.getItem('clientID'), {
+        const clientLocationsResponse = await axios.get('/locations/client/'+ decryptedToken.id, {
           headers: { 
             'Content-Type': 'application/json',
             'auth-token': token
@@ -130,18 +127,12 @@ const Index = (props) => {
           'auth-token': token
       }
     })
-     //console.log(clientPlugsResponse.data)
      setClientPlugs(clientPlugsResponse.data)
 
     } catch (error) {
       console.log(error)
     }
    }
-/*
-  useEffect(() => {
-    getClientDevices()
-    fillTable()
-  }, [])*/
 
   const fillTable = () => {
     return clientDevices.map((device, index) => {
@@ -303,7 +294,6 @@ const Index = (props) => {
 
   return (
     <>
-      <Header />
       {/* Page content */}
       <Container className="mt--7" fluid>
         <Row>

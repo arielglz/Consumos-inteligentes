@@ -1,4 +1,4 @@
-import { Line, Bar } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 // reactstrap components
 import {
   Badge,
@@ -16,25 +16,24 @@ import {
   Col,
 } from "reactstrap";
 
-import Header from "./Headers/Header"
 import Datetime from 'react-datetime'
 
 import { useEffect, useState } from "react";
 import { useOutletContext, useLocation } from "react-router-dom";
 import axios from '../api/axios'
 import jwtDecode from "jwt-decode";
+import moment from 'moment';
 
 const Consumptions = () => {
-    const [clientDevices, setClientDevices] = useState([]);
-    const [id, setId] = useState('');
     const token = localStorage.getItem('auth-token');
-    const data = jwtDecode(token);
+    const decryptedToken = jwtDecode(token);
+
     const [consumptions, setConsumptions] = useState([]);
     const [locationConsumptions, setLocationConsumptions] = useState([]);
-    const [initialDate, setInitialtDate] = useState('');
-    const [finalDate, setFinalDate] = useState('');
-    const [locationInitialDate, setLocationInitialtDate] = useState('');
-    const [locationFinalDate, setLocationFinalDate] = useState('');
+    const [initialDate, setInitialtDate] = useState(moment().subtract('months', 1).format('YYYY-MM-DD H:mm:ss'));
+    const [finalDate, setFinalDate] = useState(moment().format('YYYY-MM-DD H:mm:ss'));
+    const [locationInitialDate, setLocationInitialtDate] = useState(moment().subtract('months', 1).format('YYYY-MM-DD H:mm:ss'));
+    const [locationFinalDate, setLocationFinalDate] = useState(moment().format('YYYY-MM-DD H:mm:ss'));
     const date = new Date();
     const [chartData, setChartData] = useState({
       labels: [],
@@ -51,19 +50,31 @@ const Consumptions = () => {
         }]
       })
 
+
+    useEffect(() => {
+        getClientLocationConsumptionsBetweenDates()
+        getClientDevicesConsumptionsBetweenDates()
+
+        fillLocationTable()
+        fillTable()
+
+    }, [])
+
+
+
     const getClientDevicesConsumptionsBetweenDates = async () => {
-        console.log(date.toLocaleDateString)
+        console.log(initialDate)
        try {
         
           const toQuery = {
-            id_cliente: localStorage.getItem('clientID'),
+            id_cliente: decryptedToken.id,
             fecha_inicio: initialDate,
             fecha_final: finalDate
           }
       
           console.log(toQuery)
       
-          const dataResponse = await axios.post('/consumptions/client/' + localStorage.getItem('clientID'), toQuery, {
+          const dataResponse = await axios.post('/consumptions/client/' + decryptedToken.id, toQuery, {
             headers: {
               'Content-Type': 'application/json',
               'auth-token': token
@@ -92,14 +103,14 @@ const Consumptions = () => {
         try {
       
             const toQuery = {
-              id_cliente: localStorage.getItem('clientID'),
+              id_cliente: decryptedToken.id,
               fecha_inicio: locationInitialDate,
               fecha_final: locationFinalDate
             }
         
             console.log(toQuery)
         
-            const dataResponse = await axios.post('/consumptions/location/' + localStorage.getItem('clientID'), toQuery, {
+            const dataResponse = await axios.post('/consumptions/location/' + decryptedToken.id, toQuery, {
               headers: {
                 'Content-Type': 'application/json',
                 'auth-token': token
@@ -107,7 +118,6 @@ const Consumptions = () => {
             })
         
             console.log(dataResponse.data)
-            //setConsumptions(dataResponse.data)
             setLocationConsumptions(dataResponse.data)
             fillLocationTable()
             setLocationChartData({
@@ -155,10 +165,9 @@ const Consumptions = () => {
 
     return(
         <>
-        <Header />
         <Container className="mt--7" fluid>
         <Row >
-            <Col className="mb-5 mb-xl-0" xl="6">
+            <Col className="mb-5 mb-xl-0" xl="7">
                 <Card className="shadow">
                 <CardHeader className="border-0">
                     <Row className="align-items-center">
@@ -173,7 +182,7 @@ const Consumptions = () => {
                         <h3 className="mb-0">Fecha de inicio</h3>
                         </Col>
                         <Col md="12" xs="4">
-                        <Datetime input={true} dateFormat={'DD/MM/YYYY'} onChange={(moment) => setLocationInitialtDate(moment.format('YYYY-MM-DD H:mm:ss'))}/>
+                        <Datetime initialValue={initialDate} input={true} dateFormat={'DD/MM/YYYY'} onChange={(moment) => setLocationInitialtDate(moment.format('YYYY-MM-DD H:mm:ss'))}/>
                         </Col>
                     </Col>
                     <Col xs="6">
@@ -181,7 +190,7 @@ const Consumptions = () => {
                         <h3 className="mb-0">Fecha de final</h3>
                         </Col>
                         <Col md="12" xs="6">
-                        <Datetime className="" input={true} dateFormat={'DD/MM/YYYY'} onClose={getClientLocationConsumptionsBetweenDates} onChange={(moment) => setLocationFinalDate(moment.format('YYYY-MM-DD H:mm:ss'))}/>
+                        <Datetime initialValue={finalDate} input={true} dateFormat={'DD/MM/YYYY'} onClose={getClientLocationConsumptionsBetweenDates} onChange={(moment) => setLocationFinalDate(moment.format('YYYY-MM-DD H:mm:ss'))}/>
                         </Col>
                     </Col>
                     </Row>
@@ -200,7 +209,7 @@ const Consumptions = () => {
                     </Table>
                 </Card>
             </Col>
-            <Col xl="6">
+            <Col xl="5">
             <Card className="shadow">
                 <CardBody>
                 {console.log(chartLocationData)}
@@ -211,7 +220,7 @@ const Consumptions = () => {
             </Row>
             <br />
             <Row >
-            <Col className="mb-5 mb-xl-0" xl="6">
+            <Col className="mb-5 mb-xl-0" xl="7">
                 <Card className="shadow">
                 <CardHeader className="border-0">
                     <Row className="align-items-center">
@@ -226,7 +235,7 @@ const Consumptions = () => {
                         <h3 className="mb-0">Fecha de inicio</h3>
                         </Col>
                         <Col md="12" xs="4">
-                        <Datetime input={true} dateFormat={'DD/MM/YYYY'} onChange={moment => setInitialtDate(moment.format('YYYY-MM-DD H:mm:ss'))}/>
+                        <Datetime initialValue={initialDate} input={true} dateFormat={'DD/MM/YYYY'} onChange={moment => setInitialtDate(moment.format('YYYY-MM-DD H:mm:ss'))}/>
                         </Col>
                     </Col>
                     <Col xs="6">
@@ -234,7 +243,7 @@ const Consumptions = () => {
                         <h3 className="mb-0">Fecha de final</h3>
                         </Col>
                         <Col md="12" xs="6">
-                        <Datetime className="" input={true} dateFormat={'DD/MM/YYYY'} onClose={getClientDevicesConsumptionsBetweenDates} onChange={(moment) => setFinalDate(moment.format('YYYY-MM-DD H:mm:ss'))}/>
+                        <Datetime initialValue={finalDate} input={true} dateFormat={'DD/MM/YYYY'} onClose={getClientDevicesConsumptionsBetweenDates} onChange={(moment) => setFinalDate(moment.format('YYYY-MM-DD H:mm:ss'))}/>
                         </Col>
                     </Col>
                     </Row>
@@ -256,7 +265,7 @@ const Consumptions = () => {
                     </Table>
                 </Card>
             </Col>
-            <Col xl="6">
+            <Col xl="5">
             <Card className="shadow">
                 <CardBody>
                 {console.log(chartData)}

@@ -4,6 +4,12 @@ const router = Router();
 
 const { getLocations, getLocationsByID, registerLocation, updateLocation, deleteLocationByID, getMyLocationsByClientID } =  require('../controllers/location-controller');
 
+/*router.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+})*/
+
 router.get('/locations', verifyToken, getLocations);
 //router.get('/locations/:id', verifyToken, getLocationsByID);
 router.get('/locations/client/:id', verifyToken, getMyLocationsByClientID);

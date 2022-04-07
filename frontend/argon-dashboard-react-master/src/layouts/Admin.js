@@ -44,7 +44,6 @@ const Admin = (props) => {
     //mainContent.current.scrollTop = 0;
 
     const token = localStorage.getItem('auth-token');
-    const clientID = localStorage.getItem('clientID')
     const data = jwtDecode(token);
     let clData = [];
     setClientEmail(data.name)
@@ -134,6 +133,7 @@ const Admin = (props) => {
           clientEmail={clientEmail}
           brandText={'Brand'}
         />
+        <Header />
         <Outlet />
         {/*<Index clientDevices={clientDevices}/>*/}
           {/*brandText={getBrandText(props.location.pathname)*/}

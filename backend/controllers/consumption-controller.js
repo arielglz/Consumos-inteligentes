@@ -62,9 +62,21 @@ const getClientDevicesConsumptionsBetweenDates = async (req, res) => {
     let newArray = [];
     response.rows.forEach(i => {
         const { alias, ubicacion, nombre, marca, consumo } = i
-        let costo = 0 
-        if(consumo < 200) { costo = consumo * 7.88 } else {costo = consumo * 5.55 }
-        //console.log(parseFloat(consumo).toFixed(2))
+        let costo = 0
+        switch (consumo) {
+            case (consumo >= 201 && consumo <= 300):
+                costo = consumo * 8.59
+                break;
+            case (consumo >= 301 && consumo <= 700):
+                costo = consumo * 12.89
+                break;
+            case (consumo > 700):
+                costo = consumo * 13.09
+                break;       
+            default:
+                costo =  consumo * 6.05;
+        }
+
         newArray.push({
             alias: alias,
             ubicacion: ubicacion,
@@ -103,8 +115,21 @@ const getClientLocationConsumptionsBetweenDates = async (req, res) => {
     let newArray = [];
     response.rows.forEach(i => {
         const { alias, consumo } = i
-        let costo = 0 
-        if(consumo < 200) { costo = consumo * 7.8 } else {costo = consumo * 5.55 }
+        let costo = 0
+        switch (consumo) {
+            case (consumo >= 201 && consumo <= 300):
+                costo = consumo * 8.59
+                break;
+            case (consumo >= 301 && consumo <= 700):
+                costo = consumo * 12.89
+                break;
+            case (consumo > 700):
+                costo = consumo * 13.09
+                break;       
+            default:
+                costo =  consumo * 6.05;
+        }
+        
         newArray.push({
             alias: alias,
             consumo_t: `${consumo} kWh`,

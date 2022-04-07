@@ -26,11 +26,11 @@ import Select from 'react-select'
 
 import { useState, useEffect } from "react";
 import axios from '../api/axios'
-import Header from "./Headers/Header"
+import jwtDecode from "jwt-decode";
 
 const Plugs = () => {
-    const clientID = localStorage.getItem('clientID')
-    const token = localStorage.getItem('auth-token')
+    const token = localStorage.getItem('auth-token');
+    const decryptedToken = jwtDecode(token);
 
     const [clientLocations, setClientLocations] = useState([])
 
@@ -64,7 +64,7 @@ const Plugs = () => {
 
     const getPlugsByClientID = async() => {
         try {
-            const plugsResponse = await axios.get(`/plugs/client/${clientID}`, {
+            const plugsResponse = await axios.get(`/plugs/client/${decryptedToken.id}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'auth-token': token
@@ -79,7 +79,7 @@ const Plugs = () => {
     const getLocationsByClientID = async () => {
         try {
     
-          const clientLocationsResponse = await axios.get('/locations/client/'+ localStorage.getItem('clientID'), {
+          const clientLocationsResponse = await axios.get(`/locations/client/${decryptedToken.id}`, {
             headers: { 
               'Content-Type': 'application/json',
               'auth-token': token
@@ -247,7 +247,6 @@ const Plugs = () => {
 
     return(
         <>
-        <Header />
         <Container className="mt--7" fluid>
         <Row>
           <Col className="mb-5 mb-xl-0" xl="8">
