@@ -34,20 +34,12 @@ const Login = () => {
                   href="https://www.creative-tim.com?ref=adr-auth-footer"
                   target="_blank"
                 >
-                  Proyecto Electrico
+                  Sistema de Monitoreo y Control Remoto de Consumo Electrico en Tiempo Real (SMCTR)
                 </a>
               </div>
             </Col>
             <Col xl="6">
               <Nav className="nav-footer justify-content-center justify-content-xl-end">
-                <NavItem>
-                  <NavLink
-                    href="https://www.creative-tim.com?ref=adr-auth-footer"
-                    target="_blank"
-                  >
-                    Proyecto Electrico
-                  </NavLink>
-                </NavItem>
                 <NavItem>
                   <NavLink
                     href="https://www.creative-tim.com/presentation?ref=adr-auth-footer"

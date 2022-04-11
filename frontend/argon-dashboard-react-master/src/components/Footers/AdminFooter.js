@@ -29,11 +29,10 @@ const Footer = () => {
             © {new Date().getFullYear()}{" "}
             <a
               className="font-weight-bold ml-1"
-              href="https://www.creative-tim.com?ref=adr-admin-footer"
               rel="noopener noreferrer"
               target="_blank"
             >
-              Proyecto electrico
+              Sistema de Monitoreo y Control Remoto de Consumo Electrico en Tiempo Real (SMCTR)
             </a>
           </div>
         </Col>
@@ -42,7 +41,6 @@ const Footer = () => {
           <Nav className="nav-footer justify-content-center justify-content-xl-end">
             <NavItem>
               <NavLink
-                href=""
                 rel="noopener noreferrer"
                 target="_blank"
               >

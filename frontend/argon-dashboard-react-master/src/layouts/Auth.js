@@ -71,7 +71,7 @@ const Auth = (props) => {
                 <Col lg="5" md="6">
                   <h1 className="text-white">Bienvenido</h1>
                   <h2 className="text-lead text-light">
-                    Sistema de automatización electrica
+                  Sistema de Monitoreo y Control Remoto de Consumo Electrico en Tiempo Real (SMCTR)
                   </h2>
                 </Col>
               </Row>

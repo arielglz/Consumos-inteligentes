@@ -60,7 +60,7 @@ const AdminNavbar = (props) => {
             className="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block"
             to="/dashboard"
           >
-            {'Proyecto Electrico'}
+            {'Sistema de Monitoreo y Control Remoto de Consumo Electrico en Tiempo Real (SMCTR)'}
           </Link>
 
           <Nav className="align-items-center d-none d-md-flex" navbar>

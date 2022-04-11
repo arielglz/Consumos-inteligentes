@@ -63,7 +63,6 @@ const Consumptions = () => {
 
 
     const getClientDevicesConsumptionsBetweenDates = async () => {
-        console.log(initialDate)
        try {
         
           const toQuery = {
@@ -72,8 +71,6 @@ const Consumptions = () => {
             fecha_final: finalDate
           }
       
-          console.log(toQuery)
-      
           const dataResponse = await axios.post('/consumptions/client/' + decryptedToken.id, toQuery, {
             headers: {
               'Content-Type': 'application/json',
@@ -81,7 +78,6 @@ const Consumptions = () => {
             }
           })
       
-          console.log(dataResponse.data)
           setConsumptions(dataResponse.data)
           fillTable()
           setChartData({
@@ -107,9 +103,7 @@ const Consumptions = () => {
               fecha_inicio: locationInitialDate,
               fecha_final: locationFinalDate
             }
-        
-            console.log(toQuery)
-        
+               
             const dataResponse = await axios.post('/consumptions/location/' + decryptedToken.id, toQuery, {
               headers: {
                 'Content-Type': 'application/json',
@@ -117,7 +111,6 @@ const Consumptions = () => {
               }
             })
         
-            console.log(dataResponse.data)
             setLocationConsumptions(dataResponse.data)
             fillLocationTable()
             setLocationChartData({
@@ -212,7 +205,6 @@ const Consumptions = () => {
             <Col xl="5">
             <Card className="shadow">
                 <CardBody>
-                {console.log(chartLocationData)}
                 <Bar data={chartLocationData} />
                 </CardBody>
             </Card>
@@ -268,7 +260,6 @@ const Consumptions = () => {
             <Col xl="5">
             <Card className="shadow">
                 <CardBody>
-                {console.log(chartData)}
                 <Bar data={chartData} />
                 </CardBody>
             </Card>

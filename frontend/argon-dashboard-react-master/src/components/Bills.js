@@ -20,37 +20,56 @@ import {
 
 import Header from "components/Headers/Header.js";
 import { useEffect } from "react";
+import axios from '../api/axios'
+import jwtDecode from "jwt-decode";
 
 const Bills = (props) => {
   const [activeNav, setActiveNav] = useState(1);
   const [chartExample1Data, setChartExample1Data] = useState("data1");
   const [clientDevices, setClientDevices] = useState([])
+  const [bills, setBills] = useState([])
+
+  const token = localStorage.getItem('auth-token');
+  const decryptedToken = jwtDecode(token);
 
   useEffect (() => {
     //console.log(props.clientDevices)
     //setClientDevices(props.clientDevices)
-  }) 
+    getBills()
+  }, []) 
 
-  const fillTable = (devices) => {
-    return devices.map((device, index) => {
-      const { alias, ubicacion, nombre, marca, voltaje, estado } = device
-      return (
-        <tr key={index}>
-          <td>{alias}</td>
-          <td>{ubicacion}</td>
-          <td>{nombre}</td>
-          <td>{marca}</td>
-          <td>{voltaje}</td>
-          <td>
-            <Badge color="" className="badge-dot mr-4">
-              <i className={estado == 'OFF' ? "bg-warning" : 'bg-success'} />
-                {estado}
-            </Badge>
-          </td>
-        </tr>
-      )
-    })
-  }
+  const getBills = async () => {
+    try {
+            
+      const dataResponse = await axios.get('/bills/' + decryptedToken.id, {
+        headers: {
+          'Content-Type': 'application/json',
+          'auth-token': token
+        }
+      })
+    
+        setBills(dataResponse.data)
+        fillTable()
+    
+      } catch (error) {
+        console.log(error)
+      }
+}
+
+const fillTable = () => {
+  return bills.map((bills, index) => {
+    const { fecha, alias, habito, consumo, costo } = bills
+    return (
+      <tr key={index}>
+        <td>{fecha}</td>
+        <td>{alias}</td>
+        <td>{habito}</td>
+        <td>{consumo}</td>
+        <td>{costo}</td>
+      </tr>
+    )
+  })
+}
 
   return (
     <>
@@ -97,7 +116,7 @@ const Bills = (props) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {/*fillTable(props.clientDevices)*/}
+                  {fillTable()}
                 </tbody>
               </Table>
             </Card>
