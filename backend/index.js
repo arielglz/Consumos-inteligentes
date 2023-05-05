@@ -15,9 +15,9 @@ const app = express();
 const allowedOrigins = [
     'http://localhost:3050',
     'http://172.20.10.6:3050',
-    'http://10.0.0.5:3050',
-    'http://10.0.0.3:3050',
     'http://172.20.10.5:3050',
+    'http://192.168.8.100:3050'
+    
 ];
 
 const corsOptions = {
@@ -25,7 +25,7 @@ const corsOptions = {
         if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
             callback(null, true)
         } else {
-            callback(new Error('Not allowed by CORS'))
+            callback(new Error('Not allowed by CORS jeje'))
         }
     }, // Reemplazar con dominio
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
@@ -36,16 +36,16 @@ app.use(morgan('dev'))
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors(corsOptions));
-//app.options('*', cors())
+app.options('*', cors())
 //app.use(history());
-/*
+
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
-  });*/
+  });
 
-app.options('*', cors())
+//app.options('*', cors())
 
 //Routes
 app.use('/', require('./routes/clients'));
@@ -65,6 +65,8 @@ app.set({
     'Access-Control-Allow-Methods': 'POST,GET,DELETE,PUT,OPTIONS'
 })*/
 
+
+
 //Starting server
 const server = app.listen(app.get(process.env.PORT) || 4000,  () => {
     console.log(`The backend server is listening at port: ${process.env.PORT}`)
@@ -74,7 +76,7 @@ const server = app.listen(app.get(process.env.PORT) || 4000,  () => {
 const { Server } = require('socket.io')
 const io = new Server(5000, {
     cors: {
-        origin: '*'
+        origin: '*',
     }
 });
 
@@ -147,16 +149,4 @@ io.on('connection', (socket) => {
         }, 1000)
     })
     
-    
-    /*setInterval(() => {
-    //socket.removeAllListeners()
-    //actualTime = currentDate.getHours() + ':' + currentDate.getMinutes() + ':' + currentDate.getSeconds()
-    let actualTime=''
-    //console.log(actualTime)
-    actualTime = new Date().toLocaleTimeString();
-
-    socket.emit('info-msg', {
-        msg: `Hi, this is a info message and the date is: ${actualTime}` 
-    }
-    }, 1000)*/
 })

@@ -165,7 +165,7 @@ const Locations = (props) => {
 
   const deleteLocation = async (id) => {
       try {
-        const deleteResponse = await axios.delete('/locations/' + id, {
+        const deleteResponse = await axios.delete('/locations/' + decryptedToken.id, {
           headers: {
             'Content-Type': 'application/json',
             'auth-token': token
@@ -184,7 +184,7 @@ const Locations = (props) => {
     setWillUpdate(true)
     handleShow()
     try {
-      const responseDeviceByID = await axios.get('/locations/' + id, {
+      const responseDeviceByID = await axios.get('/locations/' + decryptedToken.id, {
         headers: {
          'Content-Type': 'application/json',
          'auth-token': token
@@ -210,7 +210,7 @@ const Locations = (props) => {
     municipio: locationMunicpio,
     ciudad: locationCiudad,
     direccion: locationDireccion,
-    id_cliente: decryptedToken.id
+    id_cliente: toString(decryptedToken.id)
   }
     
     try {

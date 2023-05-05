@@ -50,67 +50,64 @@ const getBills = async (req, res) => {
 }
 
 const getClientsConsumptionBills = async (req, res) => {
-    /*const { fecha_inicio, fecha_final } = req.body
+
+    const fecha_final = moment().format('YYYY-MM-DD H:mm:ss');
+    const fecha_inicio= moment().endOf('').subtract(15, 'days').format('YYYY-MM-DD H:mm:ss');
+
     const queryClient = `SELECT * FROM cliente`
     const clientsRes = await pool.query(queryClient)
 
-    let clientesData = []
-
-    clientsRes.rows.forEach(i => {
+    clientsRes.rows.forEach(async i => {
         const { id_cliente } = i
         let monto = 0;
         let total_consumo = 0;
         let localidad = ''
-        let cnt = 0
-        const queryConsumptions = `
-                                SELECT
-                                    localidad.alias AS "alias",
-                                    (consumo.consumo) AS "consumo"
-                                FROM
-                                    cliente,
-                                    localidad,
-                                    consumo,
-                                    plug
-                                WHERE
-                                    consumo.id_plug = plug.id_plug AND
-                                    localidad.id_localidad = plug.id_localidad AND
-                                    localidad.id_cliente = cliente.id_cliente AND
-                                    fecha::date BETWEEN $1 AND $2 AND
-                                    cliente.id_cliente = $3 
-                                `
+        const queryConsumptions = `SELECT
+                                        localidad.id_localidad as "id_localidad",
+                                        localidad.alias as "alias",
+                                        SUM(consumo.consumo) AS "consumo",
+                                        AVG(consumo.consumo) AS "habito"
+                                    FROM
+                                        cliente,
+                                        localidad,
+                                        consumo,
+                                        plug
+                                    WHERE
+                                        consumo.id_plug = plug.id_plug AND
+                                        localidad.id_localidad = plug.id_localidad AND
+                                        localidad.id_cliente = cliente.id_cliente AND
+                                        fecha::date BETWEEN $1 AND $2 AND
+                                        cliente.id_cliente = $3
+                                    GROUP BY localidad.alias, localidad.id_localidad     
+                                    `
         const clientsConsumptionRes = await pool.query(queryConsumptions, [fecha_inicio, fecha_final, id_cliente])
-        clientsConsumptionRes.rows.forEach(i => {
-            const { alias, consumo } = i
 
-            switch (consumo) {
-                case (consumo >= 201 && consumo <= 300):
-                    monto += consumo * 8.59
-                    break;
-                case (consumo >= 301 && consumo <= 700):
-                    monto += consumo * 12.89
-                    break;
-                case (consumo > 700):
-                    monto += consumo * 13.09
-                    break;       
-                default:
-                    monto += consumo * 6.05;
-            }
+        let cnt = 0;
+        clientsConsumptionRes.rows.forEach(async i => {
+            const { id_localidad, alias, consumo, habito } = i
+            monto = (consumo * 6.05) + 42.10
+            
+            const queryInsertFactura = `
+                                INSERT INTO factura (monto, habito_de_consumo, consumo, escala_de_precio, tarifa, fecha) VALUES ($1, $2, $3, $4, $5, $6)
+                                `
+            const billInsertRes = await pool.query(queryInsertFactura, [parseFloat(monto).toFixed(2), parseFloat(habito).toFixed(2), consumo, 6.05, 'BTS1', moment().format('YYYY-MM-DD')])
+            const queryGetLastBill = `
+                                    SELECT * FROM factura ORDER BY id_factura DESC LIMIT 1
+                                    `
+            const getLastBillRes = await pool.query(queryGetLastBill)
+            const { id_factura} = getLastBillRes.rows[0]
 
-            total_consumo += consumo
-            localidad = alias
+            const id_consumo = cnt+1
+            const id_cliente_factura = id_factura + cnt
+            const queryInsertFacturaLocalidad = `
+                                        INSERT INTO consumo_localidad (id_localidad, id_consumo, id_cliente_factura) VALUES ($1, $2, $3) 
+                                        `
+            const InsertConsumoLocalidad = await pool.query(queryInsertFacturaLocalidad, [id_localidad, id_consumo, id_cliente_factura])
             cnt++
-        })
 
-        clientesData.push({
-            fecha: moment().format('YYYY-MM-DD'),
-            alias: localidad,
-            habito: `${total_consumo/cnt} kWh`,
-            consumo: `${total_consumo} kWh`,
-            costo: `${parseFloat(monto).toFixed(2)} RD$`
-        })
-    });
-
-    res.status(200).json(clientesData);*/
+        });
+    })
+    res.status(200).json({msg: 'todo bien'});
 }
 
 

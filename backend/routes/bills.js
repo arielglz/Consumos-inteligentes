@@ -5,6 +5,6 @@ const router = Router();
 const { getBills, getClientsConsumptionBills } =  require('../controllers/bill-controller');
 
 router.get('/bills/:id', verifyToken, getBills);
-router.post('/bills/create', getClientsConsumptionBills);
+router.post('/bills/create/', getClientsConsumptionBills);
 
 module.exports = router;

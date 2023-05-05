@@ -97,7 +97,7 @@ const Index = (props) => {
     getClientDevicesConsumptionsBetweenDates()
     getClientLocationsConsumptionsBetweenDates()
 
-    const socket = io('ws://localhost:5000')
+    const socket = io('ws://192.168.8.100:5000')
     socket.emit('data-sended', { id_cliente: decryptedToken.id})
     socket.off('data-sended')
     socket.on('data-response', (...args) => {
