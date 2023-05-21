@@ -1,0 +1,33 @@
+version: '3.3'
+services:
+  backend-api:
+    build:
+      context: ./ 
+      dockerfile: ./docker/api/Dockerfile
+    image: backend-api
+    ports:
+    - '4000:4000'
+  # frontend-webapp:
+  #   build:
+  #     context: ./
+  #     dockerfile: ./frontend/Dockerfile
+  #     args:
+  #       target_env: ${TARGET_ENV}
+  #   image: frontend
+  #   ports:
+  #   - '80:80'
+  db-postgres:
+    # build: 
+    #   context: ./
+    #   dockerfile: ./docker/demo-mysql/Dockerfile
+    image: postgres:latest
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PASSWORD=postgres@sql
+      - POSTGRES_DB=iot
+    volumes:
+      - postgesqldb:/var/lib/postgresql/data
+    ports:
+    - '5432:5432'
+volumes:
+  postgesqldb:

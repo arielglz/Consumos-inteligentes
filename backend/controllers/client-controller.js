@@ -14,8 +14,12 @@ const pool = new Pool({
 
 //Validate register data
 const schemaRegistration = Joi.object({
-    nombres: Joi.string().min(4).max(40).required(),
-    apellidos: Joi.string().min(4).max(40).required(),
+    // nombres: Joi.string().min(4).max(40).required(),
+    // apellidos: Joi.string().min(4).max(40).required(),
+    p_nombre: Joi.string().min(4).max(40).required(),
+    s_nombre: Joi.string().min(4).max(40),
+    p_apellido: Joi.string().min(4).max(40).required(),
+    s_apellido: Joi.string().min(4).max(40),
     numero: Joi.string().min(10).max(12).required(),
     email: Joi.string().min(6).max(40).required().email(),
     password: Joi.string().min(6).max(60).required()
