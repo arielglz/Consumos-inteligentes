@@ -7,15 +7,15 @@ services:
     image: backend-api
     ports:
     - '4000:4000'
-  # frontend-webapp:
-  #   build:
-  #     context: ./
-  #     dockerfile: ./frontend/Dockerfile
-  #     args:
-  #       target_env: ${TARGET_ENV}
-  #   image: frontend
-  #   ports:
-  #   - '80:80'
+  frontend-webapp:
+    build:
+      context: ./
+      dockerfile: ./docker/webapp/Dockerfile
+      # args:
+      #   target_env: ${TARGET_ENV}
+    image: frontend
+    ports:
+    - '3000:80'
   db-postgres:
     # build: 
     #   context: ./

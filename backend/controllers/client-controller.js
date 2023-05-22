@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
 const moment = require('moment');
 
+
 const pool = new Pool({
     host: `${process.env.POSTGRES_HOST}` || 'localhost',
     user: `${process.env.POSTGRES_USERNAME}` ||'postgres',
@@ -14,12 +15,8 @@ const pool = new Pool({
 
 //Validate register data
 const schemaRegistration = Joi.object({
-    // nombres: Joi.string().min(4).max(40).required(),
-    // apellidos: Joi.string().min(4).max(40).required(),
-    p_nombre: Joi.string().min(4).max(40).required(),
-    s_nombre: Joi.string().min(4).max(40),
-    p_apellido: Joi.string().min(4).max(40).required(),
-    s_apellido: Joi.string().min(4).max(40),
+    nombres: Joi.string().min(4).max(40).required(),
+    apellidos: Joi.string().min(4).max(40).required(),
     numero: Joi.string().min(10).max(12).required(),
     email: Joi.string().min(6).max(40).required().email(),
     password: Joi.string().min(6).max(60).required()
@@ -54,9 +51,9 @@ const registerClient = async(req, res) => {
     //Validate if email already exists
     const isEmailExist = await pool.query('SELECT * FROM cliente WHERE email = $1', [req.body.email]);
     //console.log(isEmailExist.rowCount);
-    if (isEmailExist.rowCount === 0) {
+    if (isEmailExist.rowCount >= 1) {
         return res.status(409).json({
-            error: 'El email introducido no existe, favor de ingresar otro.'
+            error: 'El email introducido existe, favor de ingresar otro.'
         })
     }
     //Do a hash to the password
