@@ -12,38 +12,39 @@ const app = express();
 //Settings
 //app.set('port', process.env.PORT || 3000);
 
-const allowedOrigins = [
-    'http://localhost:3050',
-    'http://172.20.10.6:3050',
-    'http://172.20.10.5:3050',
-    'http://192.168.8.100:3050'
+// const allowedOrigins = [
+//     'http://localhost:3050',
+//     'http://172.20.10.6:3050',
+//     'http://172.20.10.5:3050',
+//     'http://192.168.8.100:3050'
     
-];
+// ];
 
-const corsOptions = {
-    origin: (origin, callback) => {
-        if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-            callback(null, true)
-        } else {
-            callback(new Error('Not allowed by CORS jeje'))
-        }
-    }, // Reemplazar con dominio
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}
+// const corsOptions = {
+//     origin: (origin, callback) => {
+//         if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+//             callback(null, true)
+//         } else {
+//             callback(new Error('Not allowed by CORS jeje'))
+//         }
+//     }, // Reemplazar con dominio
+//     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+// }
 
 //Middlewares
 app.use(morgan('dev'))
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(cors(corsOptions));
-app.options('*', cors())
+// app.use(cors(corsOptions));
+// app.options('*', cors())
+app.use(cors())
 //app.use(history());
 
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-  });
+// app.use(function(req, res, next) {
+//     res.header("Access-Control-Allow-Origin", "*");
+//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//     next();
+//   });
 
 //app.options('*', cors())
 

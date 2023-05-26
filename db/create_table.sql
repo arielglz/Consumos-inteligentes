@@ -1,19 +1,17 @@
 CREATE TABLE  cliente (
 id_cliente serial PRIMARY KEY,
-p_nombre VARCHAR (255),
-s_nombre VARCHAR (255) NOT NULL,
-p_apellido VARCHAR (355),
-s_apellido VARCHAR (355) NOT NULL,
+nombres VARCHAR (255),
+apellidos VARCHAR (355),
 numero VARCHAR (355),
 email VARCHAR (600),
 password VARCHAR (400)
 );
 
 
-INSERT INTO  cliente (p_nombre,s_nombre,p_apellido,s_apellido,numero,email,password)
-VALUES('Liliberth','Maria','Cabrera','Zapata','809-573-5025','lilibeth@gmail.com','123456');
-INSERT INTO  cliente (p_nombre,s_nombre,p_apellido,s_apellido,numero,email,password)
-VALUES('Manuel','eduardo','Ramirez','Jimenez','809-573-2550','manuel@gmail.com','123456789');
+INSERT INTO  cliente (nombres,apellidos,numero,email,password)
+VALUES('Liliberth','Cabrera','809-573-5025','lilibeth@gmail.com','123456');
+INSERT INTO  cliente (nombres,apellidos,numero,email,password)
+VALUES('Manuel','Ramirez','809-573-2550','manuel@gmail.com','123456789');
 
 
 
@@ -120,6 +118,7 @@ CREATE TABLE  dispositivo (
 id_dispositivo serial PRIMARY KEY NOT NULL,
 nombre VARCHAR (300) NOT NULL,
 serial VARCHAR (200),
+marca VARCHAR (200),
 voltaje INTEGER,
 id_plug serial,
 CONSTRAINT fk_plug  
@@ -136,14 +135,19 @@ VALUES('Estufa','SN-140203','110','2');
 CREATE TABLE  consumo (
 id_consumo serial PRIMARY KEY NOT NULL,
 consumo DECIMAL NOT NULL,
-hora TIME NOT NULL,
-fecha DATE NOT NULL,
+fecha timestamp NOT NULL,
 id_plug serial,
 CONSTRAINT fk_plug  
 FOREIGN KEY(id_plug)   
 REFERENCES  plug(id_plug)     
 );
 
+INSERT INTO  consumo (consumo,fecha, id_plug)
+VALUES('0.0120','00:00:00','2022-03-31','2022-03-31 01:10:25 ',1);
+INSERT INTO  consumo (consumo, fecha, id_plug)
+VALUES('0.4000','00:00:00','2022-03-31','2022-03-31 01:13:25 ',1);
+INSERT INTO  consumo (consumo,fecha, id_plug)
+VALUES('1.2340','00:00:00','2022-03-31','2022-03-31 01:14:25 ',1);
 
 INSERT INTO  consumo (consumo,hora,fecha,id_plug)
 VALUES('0.0010','11:00:00','2021-11-17','1');

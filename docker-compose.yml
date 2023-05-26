@@ -15,7 +15,7 @@ services:
       #   target_env: ${TARGET_ENV}
     image: frontend
     ports:
-    - '3000:80'
+    - '3500:3050'
   db-postgres:
     # build: 
     #   context: ./

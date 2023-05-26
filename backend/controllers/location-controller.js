@@ -18,7 +18,7 @@ const schemaLocationRegistration = Joi.object({
     ciudad: Joi.string().min(2).max(40).required(),
     provincia: Joi.string().min(2).max(40).required(),
     pais: Joi.string().min(6).max(40).required(),
-    id_cliente: Joi.string().min(1).max(10).allow('')
+    id_cliente: Joi.number().min(1).max(10).allow('')
 })
 
 const getLocations = async (req, res) => {

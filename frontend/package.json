@@ -22,7 +22,6 @@
   "bugs": {
     "url": "https://github.com/creativetimofficial/argon-dashboard-react/issues"
   },
-  "homepage": "https://demos.creative-tim.com/auth/login",
   "scripts": {
     "start": "export PORT=3050 && react-scripts start",
     "startwindows": "set PORT=3050 && react-scripts start",

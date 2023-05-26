@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:alpine
 WORKDIR /src
 COPY ../../backend .
 # RUN ls -lhtr / && ls -lhtr /src && sleep 30s
