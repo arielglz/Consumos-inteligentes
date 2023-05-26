@@ -32,7 +32,7 @@ on:
 
 env:
   AWS_REGION: us-east-1                   # set this to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY: 745205008438.dkr.ecr.us-east-1.amazonaws.com/my-iot           # set this to your Amazon ECR repository name
+  ECR_REPOSITORY: my-iot           # set this to your Amazon ECR repository name
   ECS_SERVICE: my-iot-service-backend                 # set this to your Amazon ECS service name
   ECS_CLUSTER: DevCluster                 # set this to your Amazon ECS cluster name
   ECS_TASK_DEFINITION: my-iot-task-backend # set this to the path to your Amazon ECS task definition
@@ -60,9 +60,12 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
 
+    # - name: Login to Amazon ECR
+    #   id: login-ecr
+    #   uses: aws-actions/amazon-ecr-login@v1
     - name: Login to Amazon ECR
       id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
+      run: aws-actions/amazon-ecr-login@v1
 
     - name: Build, tag, and push image to Amazon ECR
       id: build-image
